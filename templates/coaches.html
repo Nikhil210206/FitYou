@@ -1,366 +1,65 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}">
-    <title>FitYou - Find Your Coach</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body * {
-            font-family: 'Poppins', sans-serif;
-        }
-        .text-gradient-primary {
-            background-image: linear-gradient(135deg, #ff6b35, #7209b7);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .shadow-custom-primary {
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
-        }
-        .bg-gradient-load-more {
-            background-image: linear-gradient(to right, #00d4aa, #4361ee);
-        }
-        .bg-gradient-signin {
-            background-image: linear-gradient(to right, #ff6b35, #7209b7);
-        }
-        .sidebar {
-            transition: transform 0.3s ease-in-out;
-        }
+{% extends "base.html" %}
+{% block title %}Coaches — FitYou{% endblock %}
 
-        /* Theme toggle button styles */
-        #theme-toggle {
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+{% block head %}
+<style>
+  .coaches-layout { display: grid; grid-template-columns: 240px 1fr; gap: var(--space-6); }
+  .filter-panel { align-self: start; position: sticky; top: calc(var(--header-h) + 16px); }
+  .filter-panel h4 { margin-bottom: var(--space-3); font-size: 1rem; }
+  .filter-list { list-style: none; display: grid; gap: 4px; margin-bottom: var(--space-5); }
+  .filter-btn {
+    width: 100%; text-align: left; padding: 10px 14px; border-radius: var(--radius-sm);
+    background: transparent; border: 1.5px solid transparent; color: var(--text-muted);
+    cursor: pointer; font: inherit; font-size: 0.92rem; transition: all var(--transition);
+  }
+  .filter-btn:hover { background: var(--surface-hover); color: var(--text); }
+  .filter-btn.active { background: var(--gradient-primary); color: #fff; }
+  .coach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-5); }
+  .coach-card { padding: 0; overflow: hidden; }
+  .coach-photo { width: 100%; height: 180px; object-fit: cover; }
+  .coach-body { padding: var(--space-4); }
+  .coach-body h3 { font-size: 1.1rem; margin-bottom: 2px; }
+  .coach-meta { color: var(--text-muted); font-size: 0.85rem; margin-bottom: var(--space-2); }
+  .coach-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--space-3); }
+  .badge { font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-pill); background: var(--bg-elev); border: 1px solid var(--border); color: var(--text-muted); }
+  .coach-slots { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: var(--space-3); }
+  .slot { font-size: 0.72rem; padding: 3px 8px; border-radius: var(--radius-sm); background: var(--bg-elev-2); }
+  @media (max-width: 800px) { .coaches-layout { grid-template-columns: 1fr; } .filter-panel { position: static; } }
+</style>
+{% endblock %}
 
-        #theme-toggle i {
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow">Coaches</span>
+    <h1>Meet our <span class="text-gradient">expert coaches</span></h1>
+    <p>Certified trainers across strength, nutrition, yoga, and more — find the right fit for your goals.</p>
+  </div>
+</section>
 
-        /* Ensure proper theme switching */
-        html.dark {
-            color-scheme: dark;
-        }
-
-        html:not(.dark) {
-            color-scheme: light;
-        }
-
-        /* Theme toggle button hover effects */
-        #theme-toggle:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-        }
-
-        #theme-toggle:active {
-            transform: scale(0.95);
-        }
-
-        /* Ensure icons are perfectly centered */
-        #theme-toggle i {
-            width: 1.25rem;
-            height: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Light mode styles */
-        body.light-mode {
-            background-color: #f8f9fa !important;
-            color: #2d3436 !important;
-        }
-
-        /* Ensure proper dark mode styling */
-        html.dark body.light-mode {
-            background-color: #191919 !important;
-            color: #ffffff !important;
-        }
-
-        /* Theme toggle button icon visibility */
-        #theme-toggle i {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-
-        /* Mobile navigation icon visibility */
-        .mobile-nav i {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-
-        /* Ensure icons are visible in both themes */
-        .fas, .fa-solid {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-
-        /* Mobile navigation icon visibility */
-        .mobile-nav i {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-
-        /* Ensure icons are visible in both themes */
-        .fas, .fa-solid {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-    </style>
-</head>
-<body class="bg-[#191919] dark:bg-[#f8f9fa] text-[#ffffff] dark:text-[#2d3436] min-h-screen transition-colors duration-300">
-
-    <!-- Header Section -->
-    <header class="bg-[#0a0a0a] dark:bg-[#ffffff] shadow-[0px_4px_20px_rgba(0,0,0,0.4)] sticky top-0 z-50 transition-colors duration-300">
-        <nav class="container mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center">
-                <button id="mobile-nav-toggle" class="md:hidden p-2 text-[#ffffff] dark:text-[#2d3436] rounded-md hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
-                    <svg id="bars-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6"><path fill-rule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></svg>
-                    <svg id="x-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 hidden"><path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd" /></svg>
-                </button>
-                <a href="#" class="flex items-center gap-2">
-                    <i class="fa-solid fa-dumbbell text-3xl text-gradient-primary"></i>
-                    <span class="text-2xl font-bold text-gradient-primary">Fit You</span>
-                </a>
-            </div>
-
-            <div class="hidden md:flex flex-1 justify-center space-x-6">
-                <a href="#" class="text-[#ffffff] dark:text-[#2d3436] hover:bg-gradient-to-r hover:from-[#ff6b35] hover:to-[#7209b7] hover:text-white transition-all font-medium py-2 px-4 rounded-full">Diet Plans</a>
-                <a href="#" class="text-[#ffffff] dark:text-[#2d3436] hover:bg-gradient-to-r hover:from-[#ff6b35] hover:to-[#7209b7] hover:text-white transition-all font-medium py-2 px-4 rounded-full">Coach Plans</a>
-                <a href="#" class="text-[#ffffff] dark:text-[#2d3436] hover:bg-gradient-to-r hover:from-[#ff6b35] hover:to-[#7209b7] hover:text-white transition-all font-medium py-2 px-4 rounded-full">Tools</a>
-                <a href="#" class="text-[#ffffff] dark:text-[#2d3436] hover:bg-gradient-to-r hover:from-[#ff6b35] hover:to-[#7209b7] hover:text-white transition-all font-medium py-2 px-4 rounded-full">Workouts</a>
-                <a href="#" class="text-[#ffffff] dark:text-[#2d3436] hover:bg-gradient-to-r hover:from-[#ff6b35] hover:to-[#7209b7] hover:text-white transition-all font-medium py-2 px-4 rounded-full">Success Stories</a>
-            </div>
-
-            <div class="flex items-center space-x-4">
-                <button id="theme-toggle" class="p-2 rounded-full text-white hover:opacity-80 transition-all duration-300 bg-gradient-to-r from-[#ff6b35] to-[#7209b7] w-12 h-12 flex items-center justify-center shadow-[0_15px_40px_rgba(0,0,0,0.35)]" aria-label="Toggle dark mode">
-                    <i id="moon-icon" class="fas fa-moon text-xl"></i>
-                    <i id="sun-icon" class="fas fa-sun text-xl hidden"></i>
-                </button>
-                {% if current_user.is_authenticated %}
-                <a href="{{ url_for('logout') }}" class="hidden md:flex items-center justify-center h-10 w-24 bg-[#4361ee] text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
-                    Logout
-                </a>
-                {% else %}
-                <a href="{{ url_for('login') }}" class="hidden md:flex items-center justify-center h-10 w-24 bg-[#4361ee] text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
-                    Sign In
-                </a>
-                {% endif %}
-            </div>
-        </nav>
-    </header>
-
-    <!-- Mobile Navigation Sidebar -->
-    <div id="mobile-nav" class="sidebar fixed top-0 left-0 w-64 h-full bg-[#1a1a1a] dark:bg-white shadow-xl z-50 transform -translate-x-full md:hidden">
-        <div class="flex justify-between items-center p-4 border-b border-gray-700 dark:border-gray-200">
-            <a href="#" class="flex items-center gap-2">
-                <i class="fa-solid fa-dumbbell text-xl text-gradient-primary"></i>
-                <span class="text-xl font-bold text-gradient-primary">Fit You</span>
-            </a>
-            <button id="mobile-nav-close" class="p-2 text-[#ffffff] dark:text-[#2d3436] hover:bg-gray-700 dark:hover:bg-gray-200 rounded-md transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6"><path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd" /></svg>
-            </button>
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="coaches-layout">
+      <aside class="filter-panel">
+        <h4>Specialty</h4>
+        <ul class="filter-list" id="category-filter"></ul>
+        <h4>City</h4>
+        <select id="city-filter" class="form-select"></select>
+      </aside>
+      <div>
+        <div class="section-head" style="margin-bottom:var(--space-5);text-align:left">
+          <h2 class="section-title" id="coaches-title" style="font-size:1.5rem">All Coaches</h2>
         </div>
-        <nav class="flex flex-col p-4 space-y-2">
-            <a href="#" class="flex items-center p-2 rounded-lg text-[#ffffff] dark:text-[#2d3436] hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
-                <i class="fas fa-chart-line h-5 w-5 mr-2 text-[#ff6b35]"></i>
-                Diet Plans
-            </a>
-            <a href="#" class="flex items-center p-2 rounded-lg text-[#ffffff] dark:text-[#2d3436] hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
-                <i class="fas fa-chart-bar h-5 w-5 mr-2 text-[#7209b7]"></i>
-                Coach Plans
-            </a>
-            <a href="#" class="flex items-center p-2 rounded-lg text-[#ffffff] dark:text-[#2d3436] hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
-                <i class="fas fa-tools h-5 w-5 mr-2 text-[#ff6b35]"></i>
-                Tools
-            </a>
-            <a href="#" class="flex items-center p-2 rounded-lg text-[#ffffff] dark:text-[#2d3436] hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
-                <i class="fas fa-dumbbell h-5 w-5 mr-2 text-[#7209b7]"></i>
-                Workouts
-            </a>
-            <a href="#" class="flex items-center p-2 rounded-lg text-[#ffffff] dark:text-[#2d3436] hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
-                <i class="fas fa-star h-5 w-5 mr-2 text-[#ff6b35]"></i>
-                Success Stories
-            </a>
-            <button id="mobile-theme-toggle" class="flex items-center justify-start w-full p-2 rounded-lg text-[#ffffff] dark:text-[#2d3436] hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
-                <i id="mobile-moon-icon" class="fas fa-moon h-5 w-5 mr-2 text-[#7209b7]"></i>
-                <i id="mobile-sun-icon" class="fas fa-sun h-5 w-5 mr-2 text-[#ff6b35] hidden"></i>
-                Toggle Theme
-            </button>
-        </nav>
+        <div class="coach-grid" id="coaches-list"></div>
+      </div>
     </div>
+  </div>
+</section>
+{% endblock %}
 
-    <!-- Main Content -->
-    <main class="coaches-page">
-        <!-- Hero Section -->
-        <div class="bg-[#f8f9fa] dark:bg-[#0f0f0f] py-12 md:py-16 transition-colors duration-300">
-            <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div class="text-center md:text-left">
-                    <h1 class="text-3xl md:text-5xl font-extrabold text-[#2d3436] dark:text-[#ffffff] leading-tight mb-4">
-                        Transform your body with Strength & Conditioning
-                    </h1>
-                    <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-6">
-                        Personalized plans for your goals
-                    </p>
-                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 items-center justify-center md:justify-start">
-                        <button class="bg-gradient-to-r from-[#ff6b35] to-[#7209b7] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-colors w-full md:w-auto">
-                            Find Your Coach
-                        </button>
-                        <button class="text-[#2d3436] dark:text-[#ffffff] px-6 py-3 font-semibold rounded-lg border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-700 transition-colors w-full md:w-auto">
-                            <span class="flex items-center justify-center">
-                                Need Help?
-                            </span>
-                        </button>
-                    </div>
-                </div>
-                <div class="flex justify-center md:justify-end">
-                    <img src="https://images.pexels.com/photos/10360933/pexels-photo-10360933.jpeg" alt="Coach with Dumbbells" class="rounded-xl shadow-2xl max-h-96 w-full md:w-auto object-cover" />
-                </div>
-            </div>
-        </div>
-
-        <main class="container mx-auto px-4 py-8">
-            <div id="back-button-desktop" class="hidden md:flex items-center space-x-2 text-[#ffffff] dark:text-[#2d3436] font-semibold mb-6 hover:text-[#ff6b35] transition-colors cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5"><path fill-rule="evenodd" d="M12.55 19.14a.75.75 0 01-1.06 0l-5.75-5.75a.75.75 0 010-1.06l5.75-5.75a.75.75 0 011.06 1.06L7.81 12l4.74 4.75a.75.75 0 010 1.06z" clip-rule="evenodd" /></svg>
-                <span class="text-sm">Back</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- Category Filter Section -->
-                <div class="col-span-1">
-                    <div class="p-4 rounded-[25px] shadow-[0_15px_40px_rgba(0,0,0,0.35)] border-2 border-transparent hover:border-[#ff6b35] dark:border-2 dark:border-gray-700 bg-[#222222] dark:bg-white transition-all duration-300">
-                        <h2 class="text-xl font-bold mb-4 text-[#ffffff] dark:text-[#2d3436]">Fitness & Nutrition</h2>
-                        <nav id="category-filter-nav" class="flex flex-col space-y-2">
-                            <!-- Category links will be populated here by JavaScript -->
-                        </nav>
-                    </div>
-                </div>
-                <!-- Coaches List Section -->
-                <div class="col-span-1 md:col-span-3">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
-                        <h2 id="coaches-category-title" class="text-xl md:text-2xl font-bold text-[#ffffff] dark:text-[#2d3436] mb-4 md:mb-0">All Coaches</h2>
-                        <div class="flex items-center space-x-4">
-                            <div class="relative w-full md:w-48">
-                                <select id="city-filter" class="w-full pl-3 pr-8 py-2 text-sm text-[#ffffff] dark:text-[#2d3436] bg-[#222222] dark:bg-[#ffffff] border border-gray-700 dark:border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-[#ff6b35] focus:border-transparent transition-colors duration-300 rounded-[25px] shadow-[0_15px_40px_rgba(0,0,0,0.35)] border-2 border-transparent hover:border-[#ff6b35] dark:border-2 dark:border-gray-700">
-                                    <!-- City options will be populated here by JavaScript -->
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#ffffff] dark:text-[#2d3436]">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06L10.53 12.53a.75.75 0 01-1.06 0L5.23 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="coaches-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Coach cards will be rendered here by JavaScript -->
-                    </div>
-                    <div id="load-more-container" class="mt-8 text-center">
-                        <button id="load-more-btn" class="bg-gradient-to-r from-[#00d4aa] to-[#4361ee] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-colors">
-                            Load More
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Help Section -->
-        <div class="bg-[#f8f9fa] dark:bg-[#0f0f0f] py-16 transition-colors duration-300">
-            <div class="container mx-auto px-4 flex flex-col items-center text-center">
-                <h2 class="text-2xl md:text-3xl font-bold text-[#2d3436] dark:text-[#ffffff] mb-4">
-                    Need help finding the right coach?
-                </h2>
-                <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-2xl">
-                    We have a team of experts who will help you find the right coach for your goal.
-                </p>
-                <button class="flex items-center bg-gradient-to-r from-[#ff6b35] to-[#7209b7] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5 mr-2"><path fill-rule="evenodd" d="M11.5 2.11a.75.75 0 01.996.11l7.125 9.183a.75.75 0 01-.11 1.096L12.5 21.89a.75.75 0 01-.996-.11L4.379 13.064a.75.75 0 01.11-1.096L11.5 2.11zm-1.428 10.741a.75.75 0 101.356.608l1.325-2.956a.75.75 0 10-1.356-.608l-1.325 2.956z" clip-rule="evenodd" /></svg>
-                    Get Expert Help
-                </button>
-            </div>
-        </div>
-
-        <!-- Other Coaches Section -->
-        <div class="bg-[#f8f9fa] dark:bg-[#0f0f0f] py-16 transition-colors duration-300">
-            <div class="container mx-auto px-4">
-                <h2 class="text-2xl md:text-3xl font-bold text-center text-[#2d3436] dark:text-[#ffffff] mb-8">
-                    Looking for our other coaches?
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-[#e9ecef] dark:bg-[#252525] rounded-xl shadow-lg p-6 text-center flex flex-col items-center">
-                        <img src="https://images.unsplash.com/photo-1547949392-564560b3780f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Nutrition Coach" class="w-full h-48 object-cover rounded-xl mb-4" />
-                        <h3 class="text-xl font-bold text-[#2d3436] dark:text-[#ffffff] mb-2">Fitness & Nutrition</h3>
-                        <p class="text-gray-600 dark:text-gray-400 mb-4">Find the perfect coach to help you with your fitness and nutrition goals.</p>
-                        <a href="#" class="flex items-center font-semibold text-blue-600 dark:text-[#4361ee] hover:underline">
-                            View Coaches
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 ml-1"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.22-.53l5.75-5.75a.75.75 0 011.06 1.06L8.53 15.53a.75.75 0 01-.53.22zM7.21 5.23a.75.75 0 011.06 0L14 10.94l-5.75 5.75a.75.75 0 01-1.06-1.06L12.94 10a.75.75 0 01-.22-.53z" clip-rule="evenodd" /></svg>
-                        </a>
-                    </div>
-                    <div class="bg-[#e9ecef] dark:bg-[#252525] rounded-xl shadow-lg p-6 text-center flex flex-col items-center">
-                        <img src="https://images.unsplash.com/photo-1552673235-97e3f8a44957?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Injury Rehabilitation Coach" class="w-full h-48 object-cover rounded-xl mb-4" />
-                        <h3 class="text-xl font-bold text-[#2d3436] dark:text-[#ffffff] mb-2">Injury Rehabilitation</h3>
-                        <p class="text-gray-600 dark:text-gray-400 mb-4">Recover and rebuild with expert guidance for injuries.</p>
-                        <a href="#" class="flex items-center font-semibold text-blue-600 dark:text-[#4361ee] hover:underline">
-                            View Coaches
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 ml-1"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.22-.53l5.75-5.75a.75.75 0 011.06 1.06L8.53 15.53a.75.75 0 01-.53.22zM7.21 5.23a.75.75 0 011.06 0L14 10.94l-5.75 5.75a.75.75 0 01-1.06-1.06L12.94 10a.75.75 0 01-.22-.53z" clip-rule="evenodd" /></svg>
-                        </a>
-                    </div>
-                    <div class="bg-[#e9ecef] dark:bg-[#252525] rounded-xl shadow-lg p-6 text-center flex flex-col items-center">
-                        <img src="https://images.unsplash.com/photo-1594917417539-72f627756f7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80" alt="Kids Coach" class="w-full h-48 object-cover rounded-xl mb-4" />
-                        <h3 class="text-xl font-bold text-[#2d3436] dark:text-[#ffffff] mb-2">FitYou Kids</h3>
-                        <p class="text-gray-600 dark:text-gray-400 mb-4">Fun and engaging fitness plans for the younger generation.</p>
-                        <a href="#" class="flex items-center font-semibold text-blue-600 dark:text-[#4361ee] hover:underline">
-                            Find Coaches
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 ml-1"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.22-.53l5.75-5.75a.75.75 0 011.06 1.06L8.53 15.53a.75.75 0 01-.53.22zM7.21 5.23a.75.75 0 011.06 0L14 10.94l-5.75 5.75a.75.75 0 01-1.06-1.06L12.94 10a.75.75 0 01-.22-.53z" clip-rule="evenodd" /></svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer Section -->
-    <footer class="bg-[#0f0f0f] dark:bg-black text-[#ffffff] dark:text-[#e9ecef] py-10 transition-colors duration-300">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-8 border-b border-gray-700 pb-8 mb-8">
-                <div class="col-span-1 md:col-span-2">
-                    <a href="#" class="flex items-center gap-2 mb-4 text-white">
-                        <i class="fa-solid fa-dumbbell text-3xl text-white dark:text-black"></i>
-                        <span class="text-2xl font-bold text-white dark:text-black">Fit You</span>
-                    </a>
-                    <p class="text-sm">FitYou is a community-driven platform for fitness and nutrition, providing personalized plans and expert coaching.</p>
-                    <div class="flex space-x-4 mt-4 text-white">
-                        <a href="#" aria-label="Facebook" class="hover:text-blue-500 transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.776-1.63 1.563V12h2.77l-.44 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg>
-                        </a>
-                        <a href="#" aria-label="Twitter" class="hover:text-blue-400 transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M22.04 4.54a10.05 10.05 0 01-2.91.8c.84-.5 1.48-1.29 1.78-2.22a9.96 9.96 0 01-3.2.98c-.76-.8-1.85-1.3-3.05-1.3-2.3 0-4.17 1.87-4.17 4.17 0 .33.04.65.1.96A11.85 11.85 0 013.5 5.89c-.36.63-.56 1.37-.56 2.15 0 1.45.74 2.74 1.87 3.5a4.13 4.13 0 01-1.88-.52v.05c0 2.03 1.45 3.72 3.37 4.1.35.06.72.09 1.1.09.27 0 .54-.03.79-.08.55 1.67 2.16 2.89 4.07 2.92-1.42 1.11-3.21 1.77-5.16 1.77-.33 0-.66-.02-1-.06a11.97 11.97 0 006.47 1.89c7.76 0 11.98-6.43 11.98-11.98 0-.18 0-.36-.01-.54a8.62 8.62 0 002.11-2.19z" /></svg>
-                        </a>
-                        <a href="#" aria-label="Instagram" class="hover:text-pink-500 transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.72.01 3.682.043 2.517.11 3.623.73 4.417 1.523.795.794 1.413 1.899 1.523 4.417.032.962.043 1.252.043 3.682s-.01 2.72-.043 3.682c-.11 2.517-.73 3.623-1.523 4.417-.794.795-1.899 1.413-4.417 1.523-.962.032-1.252.043-3.682.043s-2.72-.01-3.682-.043c-2.517-.11-3.623-.73-4.417-1.523-.795-.794-1.413-1.899-1.523-4.417-.032-.962-.043-1.252-.043-3.682s.01-2.72.043-3.682c.11-2.517.73-3.623 1.523-4.417.794-.795 1.899-1.413 4.417-1.523.962-.032 1.252-.043 3.682-.043zm0 2.16a7.845 7.845 0 00-7.85 7.845 7.845 7.845 0 007.85 7.846 7.845 7.845 0 007.846-7.845A7.845 7.845 0 0012.315 4.16zm0 3.86a3.86 3.86 0 110 7.72 3.86 3.86 0 010-7.72z" clip-rule="evenodd" /></svg>
-                        </a>
-                    </div>
-                </div>
-                <div><h4 class="text-white font-bold mb-4">Company</h4><ul class="space-y-2"><li><a href="#" class="hover:text-[#ff6b35] transition-colors">About Us</a></li><li><a href="#" class="hover:text-[#ff6b35] transition-colors">Blog</a></li><li><a href="#" class="hover:text-[#ff6b35] transition-colors">Careers</a></li></ul></div>
-                <div><h4 class="text-white font-bold mb-4">Services</h4><ul class="space-y-2"><li><a href="#" class="hover:text-[#ff6b35] transition-colors">Diet Plans</a></li><li><a href="#" class="hover:text-[#ff6b35] transition-colors">Coach Plans</a></li><li><a href="#" class="hover:text-[#ff6b35] transition-colors">Workouts</a></li><li><a href="#" class="hover:text-[#ff6b35] transition-colors">Success Stories</a></li></ul></div>
-                <div><h4 class="text-white font-bold mb-4">Tools</h4><ul class="space-y-2"><li><a href="#" class="hover:text-[#ff6b35] transition-colors">Body Fat Calculator</a></li><li><a href="#" class="hover:text-[#ff6b35] transition-colors">Calorie Calculator</a></li><li><a href="#" class="hover:text-[#ff6b35] transition-colors">BMR Calculator</a></li></ul></div>
-                <div><h4 class="text-white font-bold mb-4">Legal</h4><ul class="space-y-2"><li><a href="/terms" class="hover:text-[#ff6b35] transition-colors">Terms of Service</a></li><li><a href="/privacy" class="hover:text-[#ff6b35] transition-colors">Privacy Policy</a></li><li><a href="#" class="hover:text-[#ff6b35] transition-colors">Disclaimer</a></li></ul></div>
-            </div>
-            <div class="text-center text-sm"><p>&copy; <span id="year"></span> FitYou. All Rights Reserved.</p></div>
-        </div>
-    </footer>
-
-    <script>
-        const coachesData = [
+{% block scripts %}
+<script>
+  const coachesData = [
             { id: 1, name: 'Baljeet Singh', city: 'Mumbai', rating: 4.8, peopleCoached: 121, yearsOfExperience: 5, image: 'https://images.unsplash.com/photo-1547949392-564560b3780f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80', slots: ['1-2PM', '3-4PM', '6-7PM'], category: 'Strength Training' },
             { id: 2, name: 'Rohit Sharma', city: 'Delhi', rating: 4.9, peopleCoached: 150, yearsOfExperience: 8, image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80', slots: ['2-3PM', '5-6PM'], category: 'Nutritionist' },
             { id: 3, name: 'Anjali Gupta', city: 'Bangalore', rating: 4.7, peopleCoached: 98, yearsOfExperience: 3, image: 'https://images.unsplash.com/photo-1571019613454-1cb2fde45b4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80', slots: ['10-11AM', '1-2PM', '5-6PM'], category: 'Yoga & Meditation' },
@@ -393,239 +92,59 @@
             { id: 30, name: 'Simran Khan', city: 'Ahmedabad', rating: 4.9, peopleCoached: 175, yearsOfExperience: 8, image: 'https://images.unsplash.com/photo-1549476712-4c600155a0b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80', slots: ['10-11AM', '2-3PM', '5-6PM'], category: 'Yoga & Meditation' },
         ];
 
-        const categories = ['All', 'Strength Training', 'Nutritionist', 'Yoga & Meditation', 'Online Coaches', 'Calisthenics'];
-        const cities = ['All Cities', 'Mumbai', 'Delhi', 'Bangalore', 'Kolkata', 'Chennai', 'Hyderabad', 'Ahmedabad', 'Pune', 'Surat'];
-        const INITIAL_CARDS_VISIBLE = 6;
-        const CARDS_TO_LOAD = 4;
+  const categories = ['All', ...new Set(coachesData.map(c => c.category))];
+  const cities = ['All Cities', ...new Set(coachesData.map(c => c.city))];
+  let activeCategory = 'All';
+  let activeCity = 'All Cities';
 
-        let activeCategory = 'All';
-        let cityFilter = 'All Cities';
-        let visibleCards = INITIAL_CARDS_VISIBLE;
-        
-        const mobileNav = document.getElementById('mobile-nav');
-        const mobileNavToggle = document.getElementById('mobile-nav-toggle');
-        const mobileNavClose = document.getElementById('mobile-nav-close');
-        const coachesList = document.getElementById('coaches-list');
-        const categoryNav = document.getElementById('category-filter-nav');
-        const cityFilterSelect = document.getElementById('city-filter');
-        const coachesCategoryTitle = document.getElementById('coaches-category-title');
-        const loadMoreBtn = document.getElementById('load-more-btn');
-        const loadMoreContainer = document.getElementById('load-more-container');
-        const themeToggle = document.getElementById('theme-toggle');
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-        const moonIcon = document.getElementById('moon-icon');
-        const sunIcon = document.getElementById('sun-icon');
-        const mobileMoonIcon = document.getElementById('mobile-moon-icon');
-        const mobileSunIcon = document.getElementById('mobile-sun-icon');
-        const desktopBackButton = document.getElementById('back-button-desktop');
+  const listEl = document.getElementById('coaches-list');
+  const catEl = document.getElementById('category-filter');
+  const cityEl = document.getElementById('city-filter');
+  const titleEl = document.getElementById('coaches-title');
 
-        document.getElementById('year').textContent = new Date().getFullYear();
-        
-        // Initial icon state based on the 'dark' class on the html element
-        if (document.documentElement.classList.contains('dark')) {
-            moonIcon.classList.remove('hidden');
-            sunIcon.classList.add('hidden');
-            mobileMoonIcon.classList.remove('hidden');
-            mobileSunIcon.classList.add('hidden');
-        } else {
-            moonIcon.classList.add('hidden');
-            sunIcon.classList.remove('hidden');
-            mobileMoonIcon.classList.add('hidden');
-            mobileSunIcon.classList.remove('hidden');
-        }
+  catEl.innerHTML = categories.map(c =>
+    `<li><button class="filter-btn ${c === activeCategory ? 'active' : ''}" data-cat="${c}">${c}</button></li>`
+  ).join('');
+  cityEl.innerHTML = cities.map(c => `<option value="${c}">${c}</option>`).join('');
 
-        // Mobile Nav
-        mobileNavToggle.addEventListener('click', () => {
-            mobileNav.classList.toggle('-translate-x-full');
-            document.getElementById('bars-icon').classList.toggle('hidden');
-            document.getElementById('x-icon').classList.toggle('hidden');
-        });
+  function stars(rating) {
+    const full = Math.floor(rating);
+    return '★'.repeat(full) + '☆'.repeat(5 - full);
+  }
 
-        mobileNavClose.addEventListener('click', () => {
-            mobileNav.classList.add('-translate-x-full');
-            document.getElementById('bars-icon').classList.remove('hidden');
-            document.getElementById('x-icon').classList.add('hidden');
-        });
+  function render() {
+    const items = coachesData.filter(c =>
+      (activeCategory === 'All' || c.category === activeCategory) &&
+      (activeCity === 'All Cities' || c.city === activeCity)
+    );
+    titleEl.textContent = activeCategory === 'All' ? 'All Coaches' : activeCategory;
+    listEl.innerHTML = items.length ? items.map(c => `
+      <div class="card coach-card">
+        <img class="coach-photo" src="${c.image}" alt="${c.name}" loading="lazy" />
+        <div class="coach-body">
+          <h3>${c.name}</h3>
+          <div class="coach-meta"><i class="fas fa-location-dot"></i> ${c.city} · ${c.yearsOfExperience} yrs</div>
+          <div class="coach-badges">
+            <span class="badge" style="color:var(--brand-orange)">${stars(c.rating)} ${c.rating}</span>
+            <span class="badge">${c.peopleCoached} coached</span>
+            <span class="badge">${c.category}</span>
+          </div>
+          <div class="coach-slots">${c.slots.map(s => `<span class="slot">${s}</span>`).join('')}</div>
+          <a href="/ai-coach" class="btn btn-primary btn-sm btn-block"><i class="fas fa-comments"></i> Chat with a coach</a>
+        </div>
+      </div>
+    `).join('') : '<p class="muted">No coaches match your filters.</p>';
+  }
 
-        document.body.addEventListener('click', (e) => {
-            if (!mobileNav.contains(e.target) && !mobileNavToggle.contains(e.target) && !mobileNav.classList.contains('-translate-x-full')) {
-                mobileNav.classList.add('-translate-x-full');
-                document.getElementById('bars-icon').classList.remove('hidden');
-                document.getElementById('x-icon').classList.add('hidden');
-            }
-        });
+  catEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    activeCategory = btn.dataset.cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+    render();
+  });
+  cityEl.addEventListener('change', () => { activeCity = cityEl.value; render(); });
 
-        // Desktop Back Button
-        desktopBackButton.addEventListener('click', () => {
-            history.back();
-        });
-
-        // Data Rendering and Filtering
-        function renderCoaches() {
-            const filteredCoaches = coachesData.filter(coach => {
-                const matchesCategory = activeCategory === 'All' || coach.category === activeCategory;
-                const matchesCity = cityFilter === 'All Cities' || coach.city === cityFilter;
-                return matchesCategory && matchesCity;
-            });
-            
-            coachesList.innerHTML = '';
-            filteredCoaches.slice(0, visibleCards).forEach(coach => {
-                const coachCard = `
-                    <div class="bg-[#222222] dark:bg-[#ffffff] rounded-[25px] shadow-[0_8px_25px_rgba(0,0,0,0.2)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.35)] transition-all duration-400 overflow-hidden flex flex-col items-center p-6 cursor-pointer border-2 border-transparent hover:border-[#ff6b35] transform hover:-translate-y-2">
-                        <div class="w-24 h-24 mb-4 rounded-full overflow-hidden border-2 border-[#4361ee]">
-                            <img src="${coach.image}" alt="${coach.name}" class="object-cover w-full h-full" onerror="this.onerror=null; this.src='https://placehold.co/96x96/e2e8f0/94a3b8?text=Coach';">
-                        </div>
-                        <div class="text-center w-full">
-                            <h3 class="font-bold text-[#ffffff] dark:text-[#2d3436] text-xl mb-1">${coach.name}</h3>
-                            <p class="text-xs text-[#ffffff] dark:text-[#2d3436] opacity-85 mb-1">${coach.yearsOfExperience} Years of Experience</p>
-                            <div class="flex items-center justify-center mb-1 text-yellow-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1"><path fill-rule="evenodd" d="M10.868 2.884c.306-.606.945-.964 1.62-.964h.01c.675 0 1.314.358 1.62.964l1.325 2.645c.145.289.444.475.772.51l2.909.422c.677.098 1.258.536 1.554 1.186a1.996 1.996 0 01-.581 2.21l-2.108 2.052a.75.75 0 00-.215.655l.499 2.898c.11.64.004 1.3-.263 1.838a1.995 1.995 0 01-1.859 1.253l-2.607-.547a.75.75 0 00-.636 0l-2.607.547a1.995 1.995 0 01-1.859-1.253c-.267-.538-.373-1.198-.263-1.838l.499-2.898a.75.75 0 00-.215-.655L5.786 8.95c-.41-.4-.59-1.025-.581-1.636l2.909-.422c.328-.035.627-.221.772-.51l1.325-2.645z" clip-rule="evenodd" /></svg>
-                                <span class="font-semibold text-sm">${coach.rating}</span>
-                            </div>
-                            <p class="text-xs text-[#ffffff] dark:text-[#2d3436] opacity-85 mb-2">${coach.peopleCoached} People Coached</p>
-                            <div class="flex items-center justify-center text-[#ffffff] dark:text-[#2d3436] opacity-85 mb-3">
-                                <i class="fas fa-map-marker-alt w-4 h-4 mr-1"></i>
-                                <span class="text-sm font-semibold">${coach.city}</span>
-                            </div>
-                            <div class="mb-3 text-center">
-                                <p class="text-sm font-semibold text-[#ffffff] dark:text-[#2d3436] opacity-85 mb-1">Available Slots</p>
-                                <div class="flex flex-wrap justify-center gap-2">
-                                    ${coach.slots.map(slot => `<span class="bg-[#252525] dark:bg-[#e9ecef] text-[#ffffff] dark:text-[#2d3436] text-xs font-medium px-2 py-1 rounded-full">${slot}</span>`).join('')}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="w-full flex space-x-2 mt-auto pt-4 border-t border-gray-700 dark:border-gray-200">
-                            <button class="flex-1 flex items-center justify-center bg-[#252525] dark:bg-[#e9ecef] text-[#ffffff] dark:text-[#2d3436] px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-700 dark:hover:bg-gray-300 transition-colors">
-                                <i class="far fa-comments w-4 h-4 mr-1"></i> Chat
-                            </button>
-                            <button class="flex-1 bg-gradient-to-r from-[#ff6b35] to-[#7209b7] text-white px-3 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-colors">
-                                See Plans
-                            </button>
-                        </div>
-                    </div>
-                `;
-                coachesList.innerHTML += coachCard;
-            });
-            
-            if (visibleCards >= filteredCoaches.length) {
-                loadMoreContainer.classList.add('hidden');
-            } else {
-                loadMoreContainer.classList.remove('hidden');
-            }
-        }
-
-        function renderCategoryFilters() {
-            categoryNav.innerHTML = '';
-            categories.forEach(category => {
-                const isActive = category === activeCategory;
-                const categoryLink = `
-                    <a href="#" data-category="${category}" class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 flex items-center justify-between group ${isActive ? 'bg-[#4361ee] text-white shadow-md' : 'text-[#ffffff] dark:text-[#2d3436] hover:bg-[#252525] dark:hover:bg-[#e9ecef]'
-                }">
-                        <span>${category}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 transform transition-transform duration-200 group-hover:translate-x-1"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.22-.53l5.75-5.75a.75.75 0 011.06 1.06L8.53 15.53a.75.75 0 01-.53.22zM7.21 5.23a.75.75 0 011.06 0L14 10.94l-5.75 5.75a.75.75 0 01-1.06-1.06L12.94 10a.75.75 0 01-.22-.53z" clip-rule="evenodd" /></svg>
-                        </a>
-                `;
-                categoryNav.innerHTML += categoryLink;
-            });
-
-            categoryNav.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    activeCategory = e.currentTarget.dataset.category;
-                    coachesCategoryTitle.textContent = `${activeCategory} Coaches`;
-                    visibleCards = INITIAL_CARDS_VISIBLE;
-                    renderCategoryFilters();
-                    renderCoaches();
-                });
-            });
-        }
-
-        function renderCityFilters() {
-            cityFilterSelect.innerHTML = '';
-            cities.forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                cityFilterSelect.appendChild(option);
-            });
-            cityFilterSelect.value = cityFilter;
-        }
-
-        cityFilterSelect.addEventListener('change', (e) => {
-            cityFilter = e.target.value;
-            visibleCards = INITIAL_CARDS_VISIBLE;
-            renderCoaches();
-        });
-
-        loadMoreBtn.addEventListener('click', () => {
-            visibleCards += CARDS_TO_LOAD;
-            renderCoaches();
-        });
-
-        // Initial render
-        renderCategoryFilters();
-        renderCityFilters();
-        renderCoaches();
-
-        // Theme toggle functionality
-        function toggleTheme() {
-            const body = document.body;
-            const moonIcon = document.getElementById('moon-icon');
-            const sunIcon = document.getElementById('sun-icon');
-            const mobileMoonIcon = document.getElementById('mobile-moon-icon');
-            const mobileSunIcon = document.getElementById('mobile-sun-icon');
-            
-            if (document.documentElement.classList.contains('dark')) {
-                // Switch to light mode
-                document.documentElement.classList.remove('dark');
-                body.classList.add('light-mode');
-                moonIcon.classList.add('hidden');
-                sunIcon.classList.remove('hidden');
-                mobileMoonIcon.classList.add('hidden');
-                mobileSunIcon.classList.remove('hidden');
-                localStorage.setItem('theme', 'light');
-            } else {
-                // Switch to dark mode
-                document.documentElement.classList.add('dark');
-                body.classList.remove('light-mode');
-                moonIcon.classList.remove('hidden');
-                sunIcon.classList.add('hidden');
-                mobileMoonIcon.classList.remove('hidden');
-                mobileSunIcon.classList.add('hidden');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-
-        // Initialize theme based on stored preference or system preference
-        function initializeTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
-                // Light mode
-                document.documentElement.classList.remove('dark');
-                document.body.classList.add('light-mode');
-                document.getElementById('moon-icon').classList.add('hidden');
-                document.getElementById('sun-icon').classList.remove('hidden');
-                document.getElementById('mobile-moon-icon').classList.add('hidden');
-                document.getElementById('mobile-sun-icon').classList.remove('hidden');
-            } else {
-                // Dark mode
-                document.documentElement.classList.add('dark');
-                document.body.classList.remove('light-mode');
-                document.getElementById('moon-icon').classList.remove('hidden');
-                document.getElementById('sun-icon').classList.add('hidden');
-                document.getElementById('mobile-moon-icon').classList.remove('hidden');
-                document.getElementById('mobile-sun-icon').classList.add('hidden');
-            }
-        }
-
-        // Add event listeners for theme toggle
-        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-        document.getElementById('mobile-theme-toggle').addEventListener('click', toggleTheme);
-
-        // Initialize theme when page loads
-        document.addEventListener('DOMContentLoaded', initializeTheme);
-    </script>
-</body>
-</html>
+  render();
+</script>
+{% endblock %}

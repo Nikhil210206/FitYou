@@ -80,6 +80,13 @@ def load_user(user_id):
     return db.session.get(User, int(user_id))
 
 
+@app.context_processor
+def inject_globals():
+    """Values available to every template (used by base.html / footer)."""
+    from datetime import datetime
+    return {'current_year': datetime.now().year}
+
+
 def init_db():
     """Create database tables if they don't exist yet."""
     try:
@@ -350,6 +357,15 @@ DIET_CATEGORY_ALIASES = {
 
 PREFERRED_MEAL_TYPES = ['Breakfast', 'Mid-Morning', 'Lunch', 'Afternoon Snack', 'Dinner', 'Before Bed']
 
+# Standard activity multipliers applied to BMR to estimate TDEE (maintenance calories).
+ACTIVITY_MULTIPLIERS = {
+    'sedentary': 1.2,
+    'light': 1.375,
+    'moderate': 1.55,
+    'active': 1.725,
+    'very_active': 1.9,
+}
+
 
 def normalize_goal(value):
     return GOAL_ALIASES.get((value or '').strip().lower(), 'maintenance')
@@ -422,15 +438,27 @@ class WeeklyDietPlan:
             return 10 * self.weight + 6.25 * self.height - 5 * self.age - 161
 
     def adjust_calories(self):
+        # Scale BMR by activity level to get maintenance calories (TDEE),
+        # then apply the goal delta.
+        factor = ACTIVITY_MULTIPLIERS.get(
+            (self.activity_level or '').strip().lower(), 1.2
+        )
+        tdee = self.bmr * factor
         if self.goal_key == 'weight_gain':
-            return self.bmr + 500
+            return tdee + 500
         elif self.goal_key == 'weight_loss':
-            return self.bmr - 500
+            return tdee - 500
         else:
-            return self.bmr
+            return tdee
 
     def create_diet_plan(self):
-        return {f'Day {i + 1}': self.get_meal_plan() for i in range(7)}
+        # Honor the requested plan length (in days), clamped to a sensible range.
+        try:
+            days = int(self.duration)
+        except (TypeError, ValueError):
+            days = 7
+        days = max(1, min(days, 30))
+        return {f'Day {i + 1}': self.get_meal_plan() for i in range(days)}
 
     def _meals_for_goal(self):
         """Meals matching the user's goal, falling back gracefully."""
@@ -532,11 +560,6 @@ def home():
     """Render the Home page."""
     return render_template("Home.html")
 
-@app.route("/home")
-def home_alt():
-    """Alternative route for Home page."""
-    return render_template("Home.html")
-
 @app.route('/gen', methods=['GET', 'POST'])
 @app.route('/generate', methods=['GET', 'POST'])
 def generate():
@@ -633,11 +656,6 @@ def sports():
 def work():
     """Render the workout sections page."""
     return render_template("Sections.html")
-
-@app.route("/GP")
-def gp():
-    """Render a general placeholder page (page5.html)."""
-    return render_template("page5.html")
 
 @app.route("/workout-plan")
 def workout_plan():

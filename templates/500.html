@@ -1,40 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}Something Went Wrong — FitYou{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>500 - Internal Server Error</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            text-align: center;
-            padding: 50px;
-            background: #f8f9fa;
-            color: #333;
-        }
-
-        h1 {
-            font-size: 50px;
-            margin-bottom: 20px;
-            color: #dc3545;
-        }
-
-        p {
-            font-size: 20px;
-        }
-
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-    </style>
-</head>
-
-<body>
-    <h1>500</h1>
-    <p>Oops! Something went wrong on our end.</p>
-    <p><a href="/">Go back home</a></p>
-</body>
-
-</html>
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow">Error 500</span>
+    <h1>We pulled a <span class="text-gradient">muscle</span>.</h1>
+    <p>Something went wrong on our end. Please try again in a moment.</p>
+    <div class="hero-actions">
+      <a href="{{ url_for('home') }}" class="btn btn-primary btn-lg"><i class="fas fa-house"></i> Back to Home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

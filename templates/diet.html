@@ -1,932 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FitAI - Your Personal Fitness Companion</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/faviconn.png') }}"
-        onerror="this.onerror=null;this.href='https://placehold.co/32x32/FF4F00/FFFFFF?text=FitAI';" />
-    <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700&display=swap"
-        rel="stylesheet">
-
-    <style>
-        /* All CSS variables and themes from the new style */
-        :root {
-            --primary-color: #ff4f00;
-            --primary-dark: #e04400;
-            --secondary-color: #1a1a1a;
-            --background-dark: #0a0a0a;
-            --text-light: #ffffff;
-            --text-muted: #b0b0b0;
-            --border-color: #333333;
-            --card-bg: #1e1e1e;
-            --success-color: #28a745;
-            --shadow-light: rgba(255, 255, 255, 0.1);
-            --shadow-dark: rgba(0, 0, 0, 0.3);
-            --navbar-bg: rgba(26, 26, 26, 0.95);
-        }
-
-        body.light-mode {
-            --primary-color: #ff6b35;
-            --primary-dark: #f25c2d;
-            --secondary-color: #e9ecef;
-            --background-dark: #f8f9fa;
-            --text-light: #2d3436;
-            --text-muted: #6c757d;
-            --border-color: #dee2e6;
-            --card-bg: #ffffff;
-            --success-color: #28a745;
-            --shadow-light: rgba(0, 0, 0, 0.1);
-            --shadow-dark: rgba(0, 0, 0, 0.2);
-            --navbar-bg: rgba(255, 255, 255, 0.95);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--background-dark) 0%, var(--secondary-color) 100%);
-            color: var(--text-light);
-            line-height: 1.6;
-            overflow-x: hidden;
-            transition: background 0.5s ease, color 0.5s ease;
-        }
-
-        .navbar {
-            background: var(--navbar-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 20px var(--shadow-dark);
-            transition: background 0.5s ease, border-color 0.5s ease;
-            height: 80px;
-            min-height: 80px;
-        }
-
-        body.light-mode .navbar {
-            height: 80px;
-            min-height: 80px;
-        }
-
-        .navbar .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .navbar-brand {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 2rem;
-            color: var(--primary-color) !important;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-brand:hover {
-            color: var(--text-light) !important;
-            transform: scale(1.05);
-        }
-
-        .navbar-toggler {
-            border: 2px solid var(--primary-color);
-            padding: 0.25rem 0.5rem;
-        }
-
-        .navbar-toggler:focus {
-            box-shadow: 0 0 0 0.25rem rgba(255, 79, 0, 0.25);
-        }
-
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 79, 0, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-
-        body.light-mode .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 107, 53, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-
-        .navbar-nav .nav-link {
-            color: var(--text-light) !important;
-            font-weight: 500;
-            margin: 0 0.5rem;
-            padding: 0.75rem 1.25rem !important;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .navbar-nav .nav-link:hover,
-        .navbar-nav .nav-link.active {
-            color: var(--text-light) !important;
-            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255, 79, 0, 0.3);
-        }
-
-        /* Fixed Back Button Styles (for desktop view only) */
-        .fixed-back-button {
-            position: fixed;
-            top: 90px;
-            left: 1rem;
-            z-index: 1010;
-            color: var(--text-light) !important;
-            font-weight: 600;
-            padding: 0.75rem 1.25rem !important;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .fixed-back-button:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .fixed-back-button i {
-            font-size: 1.2rem;
-        }
-
-        /* Light/Dark Mode Toggle Button */
-        .toggle-theme-btn {
-            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
-            border: none;
-            color: var(--text-light);
-            padding: 0.75rem;
-            /* Makes it a square */
-            border-radius: 50%;
-            /* Makes it a circle */
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            width: 44px;
-            /* Set a fixed size for perfect circle on all screen sizes */
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 1rem;
-        }
-
-        .toggle-theme-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-        }
-
-        /* Light mode button styling - NOW WITH ORANGE THEME */
-        body.light-mode .toggle-theme-btn {
-            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
-            color: var(--text-light);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        body.light-mode .toggle-theme-btn:hover {
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 991px) {
-            .fixed-back-button {
-                display: none;
-                /* Hide on mobile */
-            }
-
-            .navbar-collapse {
-                background: var(--navbar-bg);
-                border-radius: 8px;
-                margin-top: 1rem;
-                padding: 1rem;
-            }
-
-            /* Increase vertical gap between all nav items in mobile view */
-            .navbar-nav .nav-item {
-                margin-bottom: 0.75rem;
-                /* Increased vertical spacing */
-            }
-
-            /* Remove last item's bottom margin to prevent excess space */
-            .navbar-nav .nav-item:last-child {
-                margin-bottom: 0;
-            }
-
-            /* Ensure nav links take full width and hover doesn't collapse */
-            .navbar-nav .nav-link {
-                width: 100%;
-                text-align: left;
-                padding: 0.75rem 1rem !important;
-                /* Adjust padding slightly if needed */
-                margin: 0;
-                /* Remove horizontal margin */
-            }
-
-            /* Hide the original back button inside the navbar on all screens */
-            .navbar .back-button-nav {
-                display: none;
-            }
-        }
-
-        .form-section {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 3rem;
-            margin: 2rem 0;
-            box-shadow: 0 10px 40px var(--shadow-dark);
-            border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-            transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
-        }
-
-        .form-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
-        }
-
-        .form-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 2rem;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--text-light);
-            margin-bottom: 0.75rem;
-            font-size: 1.1rem;
-            transition: color 0.5s ease;
-        }
-
-        .form-select,
-        .form-control {
-            background: var(--secondary-color);
-            border: 2px solid var(--border-color);
-            color: var(--text-light);
-            padding: 0.875rem 1rem;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
-        .form-select:focus,
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(255, 79, 0, 0.25);
-            background: var(--secondary-color);
-            color: var(--text-light);
-            outline: none;
-        }
-
-        .form-select option {
-            background: var(--secondary-color);
-            color: var(--text-light);
-        }
-
-        .btn-generate {
-            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
-            border: none;
-            color: var(--text-light);
-            padding: 1rem 2.5rem;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(255, 79, 0, 0.3);
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-generate:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 79, 0, 0.4);
-        }
-
-        .btn-generate:active:not(:disabled) {
-            transform: translateY(-1px);
-        }
-
-        .btn-generate:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--text-light);
-            animation: spin 1s ease-in-out infinite;
-            margin-left: 10px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Tag-based Health Conditions */
-        .health-tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .health-tag {
-            background: var(--secondary-color);
-            color: var(--text-light);
-            padding: 10px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .health-tag.active {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(255, 79, 0, 0.3);
-        }
-
-        body.light-mode .health-tag {
-            background: var(--secondary-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-light);
-        }
-
-        body.light-mode .health-tag.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        /* Routine Results */
-        .routine-container {
-            margin: 3rem 0;
-        }
-
-        .routine-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .routine-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, var(--text-light), var(--primary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        body.light-mode .routine-title {
-            background: linear-gradient(45deg, var(--text-light), var(--primary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .routine-subtitle {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-        }
-
-        .diet-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 8px 30px var(--shadow-dark);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            height: 100%;
-        }
-
-        body.light-mode .diet-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .diet-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--primary-color);
-        }
-
-        .diet-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px var(--shadow-dark);
-        }
-
-        .meal-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-light);
-            margin: 0;
-        }
-
-        .meal-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .meal-item {
-            background: var(--secondary-color);
-            padding: 1rem 1.5rem;
-            margin: 0.75rem 0;
-            border-radius: 10px;
-            border-left: 3px solid var(--primary-color);
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            color: var(--text-light);
-        }
-
-        body.light-mode .meal-item {
-            background: var(--secondary-color);
-            border-left: 3px solid var(--primary-color);
-        }
-
-        .meal-item:hover {
-            background: rgba(255, 79, 0, 0.1);
-            transform: translateX(5px);
-        }
-
-        /* Alert Messages */
-        .alert {
-            border-radius: 12px;
-            border: none;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .alert-success {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .alert-danger {
-            background: linear-gradient(45deg, #dc3545, #e74c3c);
-            color: white;
-        }
-
-        .alert i {
-            font-size: 1.2rem;
-        }
-
-        .btn-close {
-            filter: invert(1);
-            margin-left: auto;
-        }
-
-        .alert-dismissible .btn-close {
-            position: static;
-            padding: 0;
-            margin: 0;
-        }
-    </style>
-</head>
-
-<body class="dark-mode">
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <!-- Brand -->
-            <a class="navbar-brand" href="{{ url_for('home') }}">
-                <i class="fas fa-dumbbell"></i> FitAI
-            </a>
-
-            <!-- Mobile Toggler -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Navbar Links + Light Mode Button -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('home') }}" onclick="setActiveNav(this)">
-                            <i class="fas fa-home"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('sports') }}" onclick="setActiveNav(this)">
-                            <i class="fas fa-calendar-alt"></i> Sport Scheduler
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('workout_plan') }}" onclick="setActiveNav(this)">
-                            <i class="fas fa-list-ul"></i> Routine Scheduler
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('diet_plan') }}" onclick="setActiveNav(this)">
-                            <i class="fas fa-apple-alt"></i> Nutrition
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('work') }}" onclick="setActiveNav(this)">
-                            <i class="fas fa-running"></i> Workouts
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('coaches') }}" onclick="setActiveNav(this)">
-                            <i class="fas fa-user-friends"></i> Coaches
-                        </a>
-                    </li>
-                    {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">
-                            <i class="fas fa-sign-in-alt"></i> Login
-                        </a>
-                    </li>
-                    {% endif %}
-                    <!-- Back Button for Mobile View (after Coaches) -->
-                    <li class="nav-item d-lg-none"> <!-- d-lg-none hides it on large screens and up -->
-                        <a class="nav-link" href="javascript:history.back()">
-                            <i class="fas fa-arrow-left"></i> Back
-                        </a>
-                    </li>
-                </ul>
-                <!-- Light Mode Button -->
-                <button class="btn toggle-theme-btn ms-lg-3">
-                    <i class="fas fa-sun"></i>
-                </button>
-            </div>
+{% extends "base.html" %}
+{% block title %}Diet Planner — FitYou{% endblock %}
+
+{% block head %}
+<style>
+  .health-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .health-tag {
+    padding: 8px 16px; border-radius: var(--radius-pill); cursor: pointer;
+    border: 1.5px solid var(--border-strong); color: var(--text-muted);
+    font-size: 0.9rem; user-select: none; transition: all var(--transition);
+  }
+  .health-tag:hover { border-color: var(--brand-orange); }
+  .health-tag.active { background: var(--gradient-primary); color: #fff; border-color: transparent; }
+  .meal-list { list-style: none; display: grid; gap: var(--space-2); }
+  .meal-list li { padding: 10px 14px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Diet Planner</span>
+      <h1 class="section-title">Your personalized <span class="text-gradient">meal plan</span></h1>
+      <p class="section-subtitle">Tell us about yourself and we'll build a plan around your goal, diet, and activity level.</p>
+    </div>
+
+    <form class="form-card" id="dietForm" action="{{ url_for('diet_plan') }}" method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" name="age" min="1" max="120" required placeholder="e.g. 25" />
         </div>
-    </nav>
-
-    <!-- Fixed Back Button (for desktop view only) -->
-    <a class="fixed-back-button d-none d-lg-flex" href="javascript:history.back()">
-        <i class="fas fa-arrow-left"></i> Back
-    </a>
-
-    <main class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 col-xl-8">
-                <!-- Form Section -->
-                <div class="form-section">
-                    <h2 class="form-title">
-                        <i class="fas fa-utensils"></i> Create Your Personalized Diet Plan
-                    </h2>
-                    <form id="dietForm" action="{{ url_for('diet_plan') }}" method="POST">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="age" class="form-label">Age</label>
-                                <input type="number" id="age" name="age" min="1" max="120" required class="form-control"
-                                    placeholder="Enter your age" />
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="gender" class="form-label">Gender</label>
-                                <select id="gender" name="gender" required class="form-select">
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="weight" class="form-label">Weight (kg)</label>
-                                <input type="number" id="weight" name="weight" min="20" max="500" step="0.1" required
-                                    class="form-control" placeholder="e.g. 70" />
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="height" class="form-label">Height (cm)</label>
-                                <input type="number" id="height" name="height" min="50" max="300" required
-                                    class="form-control" placeholder="e.g. 170" />
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="duration" class="form-label">Duration (weeks)</label>
-                                <input type="number" id="duration" name="duration" min="1" max="52" value="1" required
-                                    class="form-control" />
-                            </div>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="activity_level" class="form-label">Activity Level</label>
-                            <select id="activity_level" name="activity_level" required class="form-select">
-                                <option value="">Select Activity Level</option>
-                                <option value="sedentary">Sedentary</option>
-                                <option value="light">Lightly Active</option>
-                                <option value="moderate">Moderately Active</option>
-                                <option value="active">Very Active</option>
-                                <option value="very_active">Extra Active</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="goal" class="form-label">Goal</label>
-                            <select id="goal" name="goal" required class="form-select">
-                                <option value="">Select Your Goal</option>
-                                <option value="weight loss">Weight Loss</option>
-                                <option value="weight gain">Weight Gain</option>
-                                <option value="maintenance">Maintain Weight</option>
-                                <option value="muscle gain">Muscle Building</option>
-                                <option value="improve health">Improve Health</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="diet_type" class="form-label">Diet Type</label>
-                            <select id="diet_type" name="diet_type" required class="form-select">
-                                <option value="">Select Diet Type</option>
-                                <option value="vegetarian">Vegetarian</option>
-                                <option value="non-vegetarian">Non-Vegetarian</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group mb-4">
-                            <label class="form-label">Health Conditions (select all that apply)</label>
-                            <div class="health-tags-container">
-                                <div class="health-tag" data-value="Diabetes">Diabetes</div>
-                                <div class="health-tag" data-value="High Blood Pressure">High Blood Pressure</div>
-                                <div class="health-tag" data-value="High Cholesterol">High Cholesterol</div>
-                                <div class="health-tag" data-value="Heart Disease">Heart Disease</div>
-                            </div>
-                            <input type="hidden" id="health_conditions" name="health_conditions" value="[]" />
-                        </div>
-
-                        <!-- Optional file upload removed as it's handled by a different route/logic usually, or kept if app.py supports it mixed? 
-                             app.py has a separate route /upload_medical_certificate. 
-                             The main diet-plan route does NOT handle file upload for conditions. 
-                             So I will keep it as UI but it won't do anything for the main POST.
-                        -->
-                        <!-- <div class="form-group mb-4">
-                            <label for="medical_certificate" class="form-label">Upload Medical Certificate (Optional)</label>
-                            <input type="file" id="medical_certificate" accept=".pdf,.docx,.txt" class="form-control" />
-                            <small class="form-text text-muted">Supported formats: PDF, DOCX, TXT (Max 10MB)</small>
-                        </div> -->
-
-                        <button type="submit" class="btn-generate" id="generateBtn">
-                            <i class="fas fa-clipboard-list"></i> Generate Diet Plan
-                        </button>
-                    </form>
-                </div>
-            </div>
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender" required>
+            <option value="">Select…</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
         </div>
+      </div>
 
-        <!-- Routine Results -->
-        {% if diet_plan %}
-        <div id="dietResults">
-            <div class="routine-container fade-in">
-                <div class="routine-header">
-                    <h2 class="routine-title" id="dietTitle">Your Personalized Diet Plan</h2>
-                    <p class="routine-subtitle">A balanced plan to help you achieve your goals.</p>
-                </div>
-
-                <div class="row g-4">
-                    {% for day, meals in diet_plan.items() %}
-                    <div class="col-12 mb-4">
-                        <div class="diet-card">
-                            <h3 class="meal-title text-center mb-3">{{ day }}</h3>
-                            <ul class="meal-list">
-                                {% for meal_type, meal_desc in meals.items() %}
-                                <li class="meal-item"><strong>{{ meal_type }}:</strong> {{ meal_desc }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="weight">Weight (kg)</label>
+          <input type="number" id="weight" name="weight" min="20" max="500" step="0.1" required placeholder="e.g. 70" />
         </div>
-        {% endif %}
-    </main>
+        <div class="form-group">
+          <label for="height">Height (cm)</label>
+          <input type="number" id="height" name="height" min="50" max="300" required placeholder="e.g. 170" />
+        </div>
+        <div class="form-group">
+          <label for="duration">Plan length (days)</label>
+          <input type="number" id="duration" name="duration" min="1" max="30" value="7" required />
+        </div>
+      </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="activity_level">Activity level</label>
+          <select id="activity_level" name="activity_level" required>
+            <option value="">Select…</option>
+            <option value="sedentary">Sedentary (little exercise)</option>
+            <option value="light">Lightly active</option>
+            <option value="moderate">Moderately active</option>
+            <option value="active">Very active</option>
+            <option value="very_active">Extra active</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="goal">Goal</label>
+          <select id="goal" name="goal" required>
+            <option value="">Select…</option>
+            <option value="weight loss">Weight Loss</option>
+            <option value="weight gain">Weight Gain</option>
+            <option value="maintenance">Maintain Weight</option>
+            <option value="muscle gain">Muscle Building</option>
+            <option value="improve health">Improve Health</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="diet_type">Diet type</label>
+          <select id="diet_type" name="diet_type" required>
+            <option value="">Select…</option>
+            <option value="vegetarian">Vegetarian</option>
+            <option value="non-vegetarian">Non-Vegetarian</option>
+          </select>
+        </div>
+      </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Theme toggle functionality
-            const themeToggleButton = document.querySelector('.toggle-theme-btn');
-            const body = document.body;
+      <div class="form-group">
+        <label>Health conditions (optional)</label>
+        <div class="health-tags">
+          <div class="health-tag" data-value="Diabetes">Diabetes</div>
+          <div class="health-tag" data-value="High Blood Pressure">High Blood Pressure</div>
+          <div class="health-tag" data-value="High Cholesterol">High Cholesterol</div>
+          <div class="health-tag" data-value="Heart Disease">Heart Disease</div>
+        </div>
+        <input type="hidden" id="health_conditions" name="health_conditions" value="[]" />
+      </div>
 
-            // Check for saved theme preference in localStorage
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                body.classList.add(savedTheme);
-            }
-            updateButtonIcon();
+      <button type="submit" class="btn btn-primary btn-lg btn-block"><i class="fas fa-clipboard-list"></i> Generate Diet Plan</button>
+    </form>
 
-            themeToggleButton.addEventListener('click', () => {
-                // Toggle the theme class on the body
-                if (body.classList.contains('light-mode')) {
-                    body.classList.remove('light-mode');
-                    localStorage.setItem('theme', 'dark-mode');
-                } else {
-                    body.classList.add('light-mode');
-                    localStorage.setItem('theme', 'light-mode');
-                }
-                updateButtonIcon();
-            });
+    {% if diet_plan %}
+    <div class="section-head mt-2" style="margin-top:var(--space-8)">
+      <h2 class="section-title">Your <span class="text-gradient">Diet Plan</span></h2>
+      <p class="section-subtitle">A balanced plan to help you reach your goal.</p>
+    </div>
+    <div class="grid grid-2 fade-in">
+      {% for day, meals in diet_plan.items() %}
+      <div class="plan-day">
+        <h3>{{ day }}</h3>
+        <ul class="meal-list">
+          {% for meal_type, meal_desc in meals.items() %}
+          <li><strong>{{ meal_type }}:</strong> {{ meal_desc }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
 
-            function updateButtonIcon() {
-                const icon = themeToggleButton.querySelector('i');
-                const isLightMode = body.classList.contains('light-mode');
-                if (isLightMode) {
-                    icon.classList.remove('fa-sun');
-                    icon.classList.add('fa-moon');
-                } else {
-                    icon.classList.remove('fa-moon');
-                    icon.classList.add('fa-sun');
-                }
-            }
-
-            // Handle form submission and display results
-            const form = document.getElementById('dietForm');
-            // Form submission is now handled by server-side POST
-
-
-            // Form validation function
-            function validateForm() {
-                const requiredFields = ['age', 'gender', 'weight', 'height', 'activity_level', 'goal', 'diet_type'];
-                let isValid = true;
-
-                requiredFields.forEach(fieldId => {
-                    const field = document.getElementById(fieldId);
-                    if (!field.value.trim()) {
-                        field.style.borderColor = '#dc3545';
-                        isValid = false;
-                    } else {
-                        field.style.borderColor = '';
-                    }
-                });
-
-                if (!isValid) {
-                    alert('Please fill in all required fields.');
-                }
-
-                return isValid;
-            }
-
-            // Function to save form data
-            async function saveFormData() {
-                const formData = new FormData(form);
-
-                try {
-                    const response = await fetch('/save-diet-form', {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    const result = await response.json();
-
-                    if (!result.success) {
-                        throw new Error(result.error || 'Failed to save data');
-                    }
-
-                    return result;
-                } catch (error) {
-                    throw error;
-                }
-            }
-
-            // Function to show success message
-            function showSuccessMessage(message) {
-                const successDiv = document.createElement('div');
-                successDiv.className = 'alert alert-success alert-dismissible fade show';
-                successDiv.innerHTML = `
-                    <i class="fas fa-check-circle"></i> ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-
-                // Insert before the form
-                const formSection = document.querySelector('.form-section');
-                formSection.parentNode.insertBefore(successDiv, formSection);
-
-                // Auto-remove after 5 seconds
-                setTimeout(() => {
-                    if (successDiv.parentNode) {
-                        successDiv.remove();
-                    }
-                }, 5000);
-            }
-
-            // Function to show error message
-            function showErrorMessage(message) {
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'alert alert-danger alert-dismissible fade show';
-                errorDiv.innerHTML = `
-                    <i class="fas fa-exclamation-triangle"></i> ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-
-                // Insert before the form
-                const formSection = document.querySelector('.form-section');
-                formSection.parentNode.insertBefore(errorDiv, formSection);
-
-                // Auto-remove after 5 seconds
-                setTimeout(() => {
-                    if (errorDiv.parentNode) {
-                        errorDiv.remove();
-                    }
-                }, 5000);
-            }
-
-            // Handle health conditions button tags
-            const healthTags = document.querySelectorAll('.health-tag');
-            const healthConditionsInput = document.getElementById('health_conditions');
-
-            healthTags.forEach(tag => {
-                tag.addEventListener('click', () => {
-                    tag.classList.toggle('active');
-                    updateHealthConditionsInput();
-                });
-            });
-
-            function updateHealthConditionsInput() {
-                const selected = [];
-                document.querySelectorAll('.health-tag.active').forEach(tag => {
-                    selected.push(tag.dataset.value);
-                });
-                healthConditionsInput.value = JSON.stringify(selected);
-            }
-        });
-
-        // Navigation functionality
-        function setActiveNav(element) {
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            element.classList.add('active');
-        }
-    </script>
-</body>
-
-</html>
+{% block scripts %}
+<script>
+  const healthTags = document.querySelectorAll('.health-tag');
+  const healthConditionsInput = document.getElementById('health_conditions');
+  healthTags.forEach(tag => {
+    tag.addEventListener('click', () => {
+      tag.classList.toggle('active');
+      const selected = [];
+      document.querySelectorAll('.health-tag.active').forEach(t => selected.push(t.dataset.value));
+      healthConditionsInput.value = JSON.stringify(selected);
+    });
+  });
+</script>
+{% endblock %}

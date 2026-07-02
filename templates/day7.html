@@ -1,160 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="logo.jpg">
-    <title>Day 7: Rest Day</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-    
-<link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
-<script src="{{ url_for('static', filename='js/theme.js') }}" defer></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+{% extends "base.html" %}
+{% block title %}Day 7: Rest Day — FitYou{% endblock %}
 
-        body {
-            background-color: #db8828;
-            color: #fff;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: #222;
-            padding: 20px;
-            border-radius: 10px; /* Slightly increased border radius */
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
-        }
-
-        h1 {
-            text-align: center;
-            color: #d68215;
-            font-size: 36px; /* Increased font size */
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Added text shadow */
-        }
-
-        h2 {
-            color: #ff4f00;
-            border-bottom: 2px solid #ff4f00;
-            padding-bottom: 5px;
-            font-size: 28px; /* Increased font size */
-            font-weight: 600;
-            margin-top: 20px; /* Added margin for spacing */
-        }
-
-        .rest-info {
-            margin-bottom: 15px;
-            padding: 15px; /* Increased padding for more space */
-            border: 1px solid #444;
-            border-radius: 5px;
-            background: #333;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden; /* Ensures no overflow on hover */
-        }
-
-        .rest-info:hover {
-            transform: translateY(-8px); /* Increased hover effect */
-            box-shadow: 0 6px 15px rgba(255, 79, 0, 0.4); /* Enhanced shadow */
-        }
-
-        .rest-info h3 {
-            margin-bottom: 10px; /* Spacing between heading and content */
-            font-size: 20px; /* Slightly smaller heading size */
-            color: #ff6b35;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        ul li {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #ddd;
-        }
-
-        .quote-box {
-            background: linear-gradient(135deg, #ff6b35, #7209b7);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 20px 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .quote-box p {
-            color: white;
-            font-size: 18px;
-            font-style: italic;
-            margin: 0;
-        }
-
-        .back-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #ff6b35, #7209b7);
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: 600;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .back-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .back-button i {
-            margin-right: 8px;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 600px) {
-            .container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 28px; /* Adjusted font size for smaller screens */
-            }
-
-            h2 {
-                font-size: 24px; /* Adjusted font size for smaller screens */
-            }
-
-            .rest-info {
-                padding: 10px; /* Adjusted padding for smaller screens */
-            }
-
-            ul li {
-                font-size: 14px; /* Smaller font size for smaller screens */
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1 class="animate__animated animate__fadeInDown">Day 7: Rest Day</h1>
+{% block content %}
+<section class="section">
+  <div class="container day-plan fade-in">
+    <h1 >Day 7: Rest Day</h1>
         
-        <div class="quote-box animate__animated animate__fadeInUp">
+        <div class="quote-box">
             <p>"Rest when you're weary. Refresh and renew yourself, your body, your mind, your spirit. Then get back to work."</p>
         </div>
 
-        <section class="rest-day animate__animated animate__fadeInUp">
+        <section class="rest-day">
             <h2>Why Rest Days Are Essential</h2>
             <div class="rest-info">
                 <h3><i class="fas fa-heart"></i> Recovery and Growth</h3>
@@ -168,7 +24,7 @@
             </div>
         </section>
 
-        <section class="active-recovery animate__animated animate__fadeInUp">
+        <section class="active-recovery">
             <h2>Active Recovery Activities</h2>
             <div class="rest-info">
                 <h3><i class="fas fa-brain"></i> Light Activities</h3>
@@ -182,7 +38,7 @@
             </div>
         </section>
 
-        <section class="nutrition animate__animated animate__fadeInUp">
+        <section class="nutrition">
             <h2>Nutrition on Rest Days</h2>
             <div class="rest-info">
                 <h3><i class="fas fa-utensils"></i> Proper Fuel</h3>
@@ -196,7 +52,7 @@
             </div>
         </section>
 
-        <section class="sleep animate__animated animate__fadeInUp">
+        <section class="sleep">
             <h2>Sleep and Recovery</h2>
             <div class="rest-info">
                 <h3><i class="fas fa-moon"></i> Quality Rest</h3>
@@ -210,7 +66,7 @@
             </div>
         </section>
 
-        <section class="mental-rest animate__animated animate__fadeInUp">
+        <section class="mental-rest">
             <h2>Mental Rest</h2>
             <div class="rest-info">
                 <h3><i class="fas fa-lightbulb"></i> Mental Recovery</h3>
@@ -224,7 +80,7 @@
             </div>
         </section>
 
-        <section class="planning animate__animated animate__fadeInUp">
+        <section class="planning">
             <h2>Planning Your Next Week</h2>
             <div class="rest-info">
                 <h3><i class="fas fa-calendar-check"></i> Preparation</h3>
@@ -237,17 +93,9 @@
                 </ul>
             </div>
         </section>
-
-        <div style="text-align: center;">
-            <a href="{{ url_for('workout_plan') }}" class="back-button">
-                <i class="fas fa-arrow-left"></i> Back to Workout Plan
-            </a>
-        </div>
+    <div class="text-center mt-2">
+      <a href="{{ url_for('workout_plan') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Weekly Plan</a>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <script>
-        gsap.from(".animate__animated", { duration: 1, y: 100, opacity: 0, stagger: 0.2, ease: "power2.out" });
-    </script>
-</body>
-</html>
+  </div>
+</section>
+{% endblock %}

@@ -1,397 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Service - FitYou Fit AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --dark-bg: #0f0f0f;
-            --dark-secondary-bg: #1a1a1a;
-            --dark-tertiary-bg: #252525;
-            --light-bg: #f8f9fa;
-            --light-secondary-bg: #ffffff;
-            --light-tertiary-bg: #e9ecef;
-            --text-color-dark: #ffffff;
-            --text-color-light: #2d3436;
-            --brand-orange: #ff6b35;
-            --brand-orange-dark: #f25c2d;
-            --brand-green: #00d4aa;
-            --brand-green-dark: #00b894;
-            --brand-blue: #4361ee;
-            --accent-purple: #7209b7;
-            --gradient-primary: linear-gradient(135deg, var(--brand-orange), var(--accent-purple));
-            --gradient-secondary: linear-gradient(135deg, var(--brand-blue), var(--brand-green));
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--dark-bg);
-            color: var(--text-color-dark);
-            line-height: 1.7;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        
-        body.light-mode {
-            background: var(--light-bg);
-            color: var(--text-color-light);
-        }
-        
-        .policy-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .light-mode .policy-container {
-            background: var(--light-secondary-bg) !important;
-        }
-        
-        .section-title {
-            color: var(--brand-orange);
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            font-weight: 600;
-            font-size: 1.25rem;
-            border-left: 4px solid var(--brand-orange);
-            padding-left: 15px;
-        }
-        
-        .back-btn {
-            background: var(--gradient-primary);
-            transition: all 0.3s ease;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 30px;
-            color: white;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.3);
-            color: white;
-            text-decoration: none;
-        }
-        
-        .header-brand {
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-        }
-        
-        .main-title {
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            border-bottom: 3px solid var(--brand-orange);
-        }
-        
-        .last-updated {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 107, 53, 0.2));
-            border: 1px solid var(--brand-orange);
-            border-radius: 10px;
-        }
-        
-        .light-mode .last-updated {
-            background: linear-gradient(135deg, #fff5f0, #ffe8db);
-        }
-        
-        .important-notice {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 107, 53, 0.2));
-            border: 1px solid var(--brand-orange);
-            border-radius: 10px;
-        }
-        
-        .light-mode .important-notice {
-            background: linear-gradient(135deg, #fff5f0, #ffe8db);
-        }
-        
-        .contact-info {
-            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(67, 97, 238, 0.2));
-            border: 1px solid var(--brand-blue);
-            border-radius: 10px;
-        }
-        
-        .light-mode .contact-info {
-            background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
-        }
-        
-        .contact-info h2 {
-            color: var(--brand-blue);
-        }
-        
-        .health-disclaimer {
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.2));
-            border: 1px solid #dc3545;
-            border-radius: 10px;
-        }
-        
-        .light-mode .health-disclaimer {
-            background: linear-gradient(135deg, #fff0f0, #ffe6e6);
-        }
-        
-        ul {
-            margin-left: 20px;
-            margin-bottom: 15px;
-        }
-        
-        li {
-            margin-bottom: 8px;
-            color: var(--text-color-dark);
-        }
-        
-        .light-mode li {
-            color: var(--text-color-light);
-        }
-        
-        p {
-            margin-bottom: 15px;
-            text-align: justify;
-            color: var(--text-color-dark);
-        }
-        
-        .light-mode p {
-            color: var(--text-color-light);
-        }
-        
-        .toggle-theme {
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: 50px;
-            padding: 10px 15px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-        
-        .toggle-theme:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header style="background: rgba(26, 26, 26, 0.9); box-shadow: 0 2px 10px rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
-        <div style="max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;">
-            <h1 class="header-brand" style="font-size: 2rem; font-weight: 800;">FitYou</h1>
-            <div style="display: flex; align-items: center; gap: 1rem;">
-                <button class="toggle-theme" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <a href="/" style="color: var(--brand-orange); text-decoration: none; font-weight: 500; transition: all 0.3s ease;">← Back to Home</a>
-            </div>
-        </div>
-    </header>
+{% extends "base.html" %}
+{% block title %}Terms of Service — FitYou{% endblock %}
 
-    <!-- Main Content -->
-    <main class="policy-container" style="background: var(--dark-secondary-bg); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: 2rem auto; padding: 3rem;">
-            <h1 class="main-title" style="font-size: 3rem; font-weight: 800; text-align: center; margin-bottom: 2rem; padding-bottom: 1rem;">Terms of Service</h1>
-            
-            <div class="last-updated" style="padding: 1rem; margin-bottom: 2rem; text-align: center;">
-                <p style="font-size: 0.9rem; color: var(--brand-orange); font-weight: 600;"><strong>Last Updated:</strong> January 2025</p>
-            </div>
+{% block content %}
+<section class="section">
+  <div class="container legal">
+    <div class="section-head">
+      <span class="eyebrow">Legal</span>
+      <h1 class="section-title">Terms of <span class="text-gradient">Service</span></h1>
+      <p class="updated">Last updated: January 2025</p>
+    </div>
 
-            <div class="important-notice" style="padding: 1.5rem; margin-bottom: 2rem;">
-                <h3 style="font-weight: 700; color: var(--brand-orange); margin-bottom: 0.5rem;"><i class="fas fa-exclamation-triangle"></i> Important Notice</h3>
-                <p style="color: var(--brand-orange-dark);">By using FitYou Fit AI services, you agree to these terms. Please read them carefully before using our platform.</p>
-            </div>
+    <div class="card">
+      <div class="note">By using FitYou services, you agree to these terms. Please read them carefully before using our platform.</div>
 
-            <div class="space-y-6">
-                <section>
-                    <h2 class="section-title">1. Acceptance of Terms</h2>
-                    <p>By accessing and using FitYou Fit AI ("the Service"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use our service.</p>
-                </section>
+      <h2>1. Acceptance of Terms</h2>
+      <p>By accessing and using FitYou ("the Service"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree, please do not use our service.</p>
 
-                <section>
-                    <h2 class="section-title">2. Service Description</h2>
-                    <p>FitYou Fit AI provides artificial intelligence-powered fitness recommendations, personalized workout plans, diet suggestions, and health guidance. Our services are designed to assist users in achieving their fitness goals through data-driven insights.</p>
-                </section>
+      <h2>2. Service Description</h2>
+      <p>FitYou provides AI-powered fitness recommendations, personalized workout plans, diet suggestions, and health guidance designed to help users achieve their fitness goals through data-driven insights.</p>
 
-                <section>
-                    <h2 class="section-title">3. User Responsibilities</h2>
-                    <p>As a user of our service, you agree to:</p>
-                    <ul>
-                        <li>Provide accurate and complete information about your health and fitness status</li>
-                        <li>Use the service responsibly and in accordance with applicable laws</li>
-                        <li>Maintain the confidentiality of your account credentials</li>
-                        <li>Consult with qualified healthcare professionals before starting any fitness program</li>
-                        <li>Not use the service for any illegal, harmful, or unauthorized purposes</li>
-                        <li>Respect the intellectual property rights of FitYou and other users</li>
-                    </ul>
-                </section>
+      <h2>3. User Responsibilities</h2>
+      <ul>
+        <li>Provide accurate and complete information about your health and fitness status.</li>
+        <li>Use the service responsibly and in accordance with applicable laws.</li>
+        <li>Maintain the confidentiality of your account credentials.</li>
+        <li>Consult qualified healthcare professionals before starting any fitness program.</li>
+        <li>Not use the service for any illegal, harmful, or unauthorized purposes.</li>
+      </ul>
 
-                <section>
-                    <h2 class="section-title">4. Health and Safety Disclaimer</h2>
-                    <div class="health-disclaimer" style="padding: 1.5rem;">
-                        <p style="color: #dc3545; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-exclamation-triangle"></i> Medical Disclaimer</p>
-                        <p style="color: #c82333;">Our AI-generated fitness recommendations, workout plans, and dietary suggestions are for informational and educational purposes only. They do not constitute medical advice, diagnosis, or treatment. Always consult with qualified healthcare professionals before beginning any exercise program or making dietary changes. You assume all risks associated with following our recommendations.</p>
-                    </div>
-                </section>
+      <h2>4. Health &amp; Safety Disclaimer</h2>
+      <div class="note">Our AI-generated fitness recommendations, workout plans, and dietary suggestions are for informational and educational purposes only. They do not constitute medical advice, diagnosis, or treatment. Always consult qualified healthcare professionals before beginning any exercise program or making dietary changes. You assume all risks associated with following our recommendations.</div>
 
-                <section>
-                    <h2 class="section-title">5. Account Terms</h2>
-                    <p>You are responsible for:</p>
-                    <ul>
-                        <li>Maintaining the security of your account and password</li>
-                        <li>All activities that occur under your account</li>
-                        <li>Notifying us immediately of any unauthorized use</li>
-                        <li>Providing accurate registration information</li>
-                    </ul>
-                </section>
+      <h2>5. Account Terms</h2>
+      <p>You are responsible for maintaining the security of your account and password, all activities under your account, notifying us of any unauthorized use, and providing accurate registration information.</p>
 
-                <section>
-                    <h2 class="section-title">6. Payment and Subscription Terms</h2>
-                    <p>For premium features:</p>
-                    <ul>
-                        <li>Subscription fees are billed in advance on a recurring basis</li>
-                        <li>All fees are non-refundable except as required by applicable law</li>
-                        <li>We reserve the right to change pricing with 30 days notice</li>
-                        <li>You may cancel your subscription at any time</li>
-                    </ul>
-                </section>
+      <h2>6. Intellectual Property</h2>
+      <p>The Service and its original content, features, algorithms, and functionality are owned by FitYou and protected by copyright, trademark, and other intellectual property laws.</p>
 
-                <section>
-                    <h2 class="section-title">7. Intellectual Property Rights</h2>
-                    <p>The Service and its original content, features, algorithms, and functionality are owned by FitYou Fit AI and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.</p>
-                </section>
+      <h2>7. Limitation of Liability</h2>
+      <p>FitYou shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the service.</p>
 
-                <section>
-                    <h2 class="section-title">8. User-Generated Content</h2>
-                    <p>By submitting content to our platform, you grant us a non-exclusive, worldwide, royalty-free license to use, modify, and display such content for the purpose of providing and improving our services.</p>
-                </section>
+      <h2>8. Changes to Terms</h2>
+      <p>We reserve the right to modify these terms at any time. We will notify users of material changes by posting the updated Terms of Service and updating the "Last Updated" date.</p>
 
-                <section>
-                    <h2 class="section-title">9. Limitation of Liability</h2>
-                    <p>FitYou Fit AI shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or other intangible losses resulting from your use of the service.</p>
-                </section>
-
-                <section>
-                    <h2 class="section-title">10. Service Availability</h2>
-                    <p>We strive to maintain high service availability but do not guarantee uninterrupted access. We may modify, suspend, or discontinue any part of the service at any time with or without notice.</p>
-                </section>
-
-                <section>
-                    <h2 class="section-title">11. Prohibited Uses</h2>
-                    <p>You may not use our service to:</p>
-                    <ul>
-                        <li>Violate any applicable laws or regulations</li>
-                        <li>Transmit harmful or malicious code</li>
-                        <li>Attempt to gain unauthorized access to our systems</li>
-                        <li>Interfere with other users' experience</li>
-                        <li>Use automated systems to access the service</li>
-                    </ul>
-                </section>
-
-                <section>
-                    <h2 class="section-title">12. Termination</h2>
-                    <p>We may terminate or suspend your account immediately, without prior notice, for conduct that we believe violates these Terms of Service or is harmful to other users, us, or third parties.</p>
-                </section>
-
-                <section>
-                    <h2 class="section-title">13. Changes to Terms</h2>
-                    <p>We reserve the right to modify these terms at any time. We will notify users of any material changes by posting the updated Terms of Service on our website and updating the "Last Updated" date.</p>
-                </section>
-
-                <section>
-                    <h2 class="section-title">14. Governing Law</h2>
-                    <p>These Terms shall be interpreted and governed by the applicable laws, without regard to conflict of law provisions. Any disputes will be resolved through binding arbitration.</p>
-                </section>
-            </div>
-
-            <div class="contact-info" style="padding: 2rem; margin-top: 2rem;">
-                <h2 class="section-title">Contact Information</h2>
-                <p style="color: var(--brand-blue);">If you have any questions about these Terms of Service, please contact us:</p>
-                <div style="margin-top: 1rem; color: var(--brand-blue);">
-                    <p><strong>Email:</strong> <a href="javascript:void(0)" onclick="handleEmailClick()" style="color: inherit; text-decoration: none; cursor: pointer;">nikhilbalamurugan@gmail.com</a></p>
-                    <p><strong>Address:</strong> Chennai, Tamil Nadu, India</p>
-                    <p><strong>Phone:</strong> <a href="javascript:void(0)" onclick="handlePhoneClick()" style="color: inherit; text-decoration: none; cursor: pointer;">+91 7305644420</a></p>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="/" class="back-btn">
-                    <i class="fas fa-arrow-left"></i> Return to Home
-                </a>
-            </div>
-    </main>
-
-    <!-- Footer -->
-    <footer style="background: var(--dark-bg); color: var(--text-color-dark); padding: 2rem 0; text-align: center;">
-        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
-            <p>&copy; 2025 <span class="header-brand">FitYou</span>. All rights reserved.</p>
-        </div>
-    </footer>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const themeToggle = document.getElementById('themeToggle');
-            const body = document.body;
-            const header = document.querySelector('header');
-            const main = document.querySelector('main');
-            
-            // Check for saved theme preference or default to dark mode
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            if (savedTheme === 'light') {
-                body.classList.add('light-mode');
-                header.style.background = 'rgba(255, 255, 255, 0.9)';
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            }
-            
-            themeToggle.addEventListener('click', () => {
-                body.classList.toggle('light-mode');
-                const isLight = body.classList.contains('light-mode');
-                
-                if (isLight) {
-                    header.style.background = 'rgba(255, 255, 255, 0.9)';
-                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    header.style.background = 'rgba(26, 26, 26, 0.9)';
-                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                    localStorage.setItem('theme', 'dark');
-                }
-            });
-        });
-        
-        // Enhanced contact functions inspired by KiddieGPT - Global scope
-        function handleEmailClick() {
-          const email = "nikhilbalamurugan@gmail.com";
-          const subject = "Hello from FitYou!";
-          const body = "Hi there!\n\nI would like to get in touch with you about FitYou services.";
-          
-          // Try to open Gmail directly first
-          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-          const newWindow = window.open(gmailUrl, '_blank');
-          
-          // Fallback to mailto if Gmail doesn't open
-          setTimeout(() => {
-            if (!newWindow || newWindow.closed) {
-              window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            }
-          }, 1000);
-        }
-        
-        function handlePhoneClick() {
-          window.location.href = "tel:+917305644420";
-        }
-    </script>
-</body>
-</html>
+      <h2>Contact</h2>
+      <p>Questions about these Terms? Email <a href="mailto:nikhilbalamurugan@gmail.com">nikhilbalamurugan@gmail.com</a>, Chennai, Tamil Nadu, India.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

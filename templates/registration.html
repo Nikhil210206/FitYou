@@ -1,243 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}Create Account — FitYou{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>FitYou - Register</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f7fa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+{% block content %}
+<section class="auth-wrap">
+  <div class="auth-card fade-in">
+    <h2>Create your account</h2>
+    <p class="sub">Join FitYou and start training smarter today.</p>
 
-        .register-container {
-            background: white;
-            padding: 30px;
-            width: 100%;
-            max-width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        label {
-            display: block;
-            margin-top: 12px;
-            text-align: left;
-            font-weight: bold;
-            color: #555;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 20px;
-            background: #333;
-            color: white;
-            font-size: 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background: #ff9800;
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        .login-link a {
-            color: #ff9800;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .register-container {
-                padding: 20px;
-            }
-
-            h2 {
-                font-size: 20px;
-            }
-        }
-
-        .error {
-            color: red;
-            font-size: 13px;
-            margin-top: 3px;
-            text-align: left;
-        }
-
-        .flash {
-            padding: 10px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .flash.error {
-            background: #fdecea;
-            color: #b71c1c;
-            border: 1px solid #f5c6cb;
-        }
-
-        .flash.success {
-            background: #e8f5e9;
-            color: #1b5e20;
-            border: 1px solid #c3e6cb;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="register-container">
-        <h2>Create an Account</h2>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="flash {{ category }}">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-
-        <form id="registerForm" action="{{ url_for('register') }}" method="POST">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" placeholder="Enter your name" required>
-            <div class="error" id="nameError"></div>
-
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            <div class="error" id="emailError"></div>
-
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter a password (min 6 chars)" required>
-            <div class="error" id="passwordError"></div>
-
-            <label for="age">Age</label>
-            <input type="number" id="age" name="age" placeholder="Enter your age">
-            <div class="error" id="ageError"></div>
-
-            <label for="gender">Gender</label>
-            <select id="gender" name="gender">
-                <option value="">--Select Gender--</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-            </select>
-            <div class="error" id="genderError"></div>
-
-            <label for="goal">Fitness Goal</label>
-            <select id="goal" name="goal">
-                <option value="">--Select Goal--</option>
-                <option value="weight_loss">Weight Loss</option>
-                <option value="muscle_gain">Muscle Gain</option>
-                <option value="general_fitness">General Fitness</option>
-                <option value="strength_training">Strength Training</option>
-            </select>
-            <div class="error" id="goalError"></div>
-
-            <button type="submit">Register</button>
-        </form>
-
-        <div class="login-link">
-            Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+    <form action="{{ url_for('register') }}" method="POST">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Your name" minlength="2" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="At least 6 characters" minlength="6" required />
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" name="age" placeholder="Age" min="13" max="100" />
         </div>
-        <div class="login-link">
-            <a href="{{ url_for('home') }}">← Back to Home</a>
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender">
+            <option value="">Select…</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
         </div>
-    </div>
+      </div>
+      <div class="form-group">
+        <label for="goal">Fitness goal</label>
+        <select id="goal" name="goal">
+          <option value="">Select…</option>
+          <option value="weight_loss">Weight Loss</option>
+          <option value="muscle_gain">Muscle Gain</option>
+          <option value="general_fitness">General Fitness</option>
+          <option value="strength_training">Strength Training</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Create Account</button>
+    </form>
 
-    <script>
-        const form = document.getElementById('registerForm');
-
-        form.addEventListener('submit', function (e) {
-            let valid = true;
-
-            // Reset errors
-            document.querySelectorAll('.error').forEach(el => el.textContent = '');
-
-            // Name
-            const name = document.getElementById('name').value.trim();
-            if (name.length < 2) {
-                document.getElementById('nameError').textContent = "Name must be at least 2 characters.";
-                valid = false;
-            }
-
-            // Email
-            const email = document.getElementById('email').value.trim();
-            const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,}$/i;
-            if (!email.match(emailPattern)) {
-                document.getElementById('emailError').textContent = "Enter a valid email.";
-                valid = false;
-            }
-
-            // Password
-            const password = document.getElementById('password').value.trim();
-            if (password.length < 6) {
-                document.getElementById('passwordError').textContent = "Password must be at least 6 characters.";
-                valid = false;
-            }
-
-            // Age
-            const age = document.getElementById('age').value;
-            if (age < 13 || age > 100) {
-                document.getElementById('ageError').textContent = "Enter a valid age (13-100).";
-                valid = false;
-            }
-
-            // Gender
-            const gender = document.getElementById('gender').value;
-            if (gender === "") {
-                document.getElementById('genderError').textContent = "Please select a gender.";
-                valid = false;
-            }
-
-            // Goal
-            const goal = document.getElementById('goal').value;
-            if (goal === "") {
-                document.getElementById('goalError').textContent = "Please select a fitness goal.";
-                valid = false;
-            }
-
-            if (!valid) e.preventDefault();  // otherwise submit to the server
-        });
-    </script>
-</body>
-
-</html>
+    <p class="auth-alt">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+  </div>
+</section>
+{% endblock %}

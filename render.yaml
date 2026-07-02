@@ -8,10 +8,7 @@ services:
     envVars:
       - key: GEMINI_API_KEY
         sync: false
-
-  - type: web
-    name: fitai-frontend
-    runtime: static
-    buildCommand: npm install && npm run build
-    staticPublishPath: frontend/build
-    plan: free
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false

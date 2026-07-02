@@ -1,265 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      type="image/png"
-      href="{{ url_for('static', filename='images/faviconn.png') }}"
-    />
+{% extends "base.html" %}
+{% block title %}Workout Generator — FitYou{% endblock %}
 
-    <title>Workout Routine Scheduler</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/theme.css') }}"
-    />
-    <script
-      src="{{ url_for('static', filename='js/theme.js') }}"
-      defer
-    ></script>
-    <style>
-      /* General Styling */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Poppins", sans-serif;
-        background: linear-gradient(135deg, #000 40%, #111 100%);
-        color: #fff;
-        padding: 20px;
-        transition: background 0.3s ease;
-        opacity: 0;
-        animation: fadeIn 1s forwards ease-in;
-      }
-
-      @keyframes fadeIn {
-        to {
-          opacity: 1;
-        }
-      }
-
-      .container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 30px;
-        background-color: #1c1c1c;
-        border-radius: 20px;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
-      }
-
-      .container:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
-      }
-
-      h1 {
-        text-align: center;
-        margin-bottom: 30px;
-        font-size: 42px;
-        font-weight: 600;
-        color: #ff4f00;
-        letter-spacing: 1px;
-        position: relative;
-        animation: bounce 2s infinite;
-      }
-
-      @keyframes bounce {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-      }
-
-      label {
-        font-weight: 500;
-        margin-bottom: 8px;
-        color: #ff4f00;
-        font-size: 18px;
-      }
-
-      input[type="number"],
-      select {
-        width: 100%;
-        padding: 12px;
-        background-color: #2e2e2e;
-        border: 1px solid #444;
-        border-radius: 10px;
-        font-size: 16px;
-        color: #fff;
-        transition: border-color 0.4s, box-shadow 0.4s;
-        box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.8),
-          inset -4px -4px 10px rgba(255, 255, 255, 0.1);
-      }
-
-      input[type="number"]:focus {
-        border-color: #ff4f00;
-        box-shadow: 0 0 10px #ff4f00,
-          inset -4px -4px 10px rgba(255, 255, 255, 0.1);
-        outline: none;
-      }
-
-      button[type="submit"] {
-        width: 100%;
-        padding: 15px;
-        background: linear-gradient(135deg, #ff4f00, #e64a00);
-        color: #fff;
-        border: none;
-        border-radius: 50px;
-        font-size: 20px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background 0.4s ease, transform 0.3s ease;
-        position: relative;
-        overflow: hidden;
-      }
-
-      button[type="submit"]::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        width: 300%;
-        height: 300%;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        transition: transform 0.6s ease;
-      }
-
-      button[type="submit"]:hover::before {
-        transform: translate(-50%, -50%) scale(1);
-      }
-
-      button[type="submit"]:hover {
-        transform: translateY(-5px);
-        background: linear-gradient(135deg, #ff6f00, #ff4f00);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
-      }
-
-      /* Workout Routine List */
-      .list-group-item {
-        background-color: #2e2e2e;
-        border-color: #444;
-        color: #fff;
-        font-size: 18px;
-        padding: 20px;
-        border-radius: 25px; /* Fully rounded corners */
-        margin-bottom: 20px;
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-      }
-
-      .list-group-item:hover {
-        transform: translateY(-10px); /* Lift effect */
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
-      }
-
-      .list-group-item strong {
-        color: #ff4f00;
-      }
-
-      .mt-4 {
-        margin-top: 40px;
-      }
-
-      /* Media Queries */
-      @media (max-width: 600px) {
-        h1 {
-          font-size: 30px;
-        }
-
-        button[type="submit"] {
-          font-size: 18px;
-          padding: 12px;
-        }
-
-        .list-group-item {
-          font-size: 16px;
-        }
-      }
-
-      /* Back Button Styling */
-      .back-button {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        background: linear-gradient(90deg, #ff6600, #ff3300);
-        color: white;
-        text-decoration: none;
-        padding: 10px 18px;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-        transition: 0.3s ease;
-      }
-
-      .back-button:hover {
-        transform: scale(1.05);
-        background: linear-gradient(90deg, #ff3300, #ff6600);
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Back Button -->
-    <a href="{{ url_for('diet_plan') }}" class="back-button">← Back</a>
-
-    <div class="container mt-5">
-      <h1>Workout Routine Scheduler</h1>
-      <form action="/generate" method="POST">
-        <div class="form-group">
-          <label for="weight">Weight (kg):</label>
-          <input
-            type="number"
-            class="form-control"
-            name="weight"
-            min="1"
-            value="{{ form_data.weight if form_data else '' }}"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="height">Height (cm):</label>
-          <input
-            type="number"
-            class="form-control"
-            name="height"
-            min="1"
-            value="{{ form_data.height if form_data else '' }}"
-            required
-          />
-        </div>
-
-        <button type="submit" class="btn btn-primary">Get the Plan!</button>
-      </form>
-
-      {% if routine %}
-      <div class="mt-4">
-        <h2>Your Workout Routine:</h2>
-        <ul class="list-group">
-          {% for exercise in routine %}
-          <li class="list-group-item">{{ exercise }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Workout Generator</span>
+      <h1 class="section-title">Build your <span class="text-gradient">routine</span></h1>
+      <p class="section-subtitle">Enter your details and we'll tailor a warm-up, workout, and cool-down to your body.</p>
     </div>
-  </body>
-</html>
+
+    <form class="form-card" action="{{ url_for('generate') }}" method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="weight">Weight (kg)</label>
+          <input type="number" id="weight" class="form-control" name="weight" min="1" step="0.1"
+                 value="{{ form_data.weight if form_data else '' }}" required />
+        </div>
+        <div class="form-group">
+          <label for="height">Height (cm)</label>
+          <input type="number" id="height" class="form-control" name="height" min="1"
+                 value="{{ form_data.height if form_data else '' }}" required />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg btn-block"><i class="fas fa-bolt"></i> Generate My Routine</button>
+    </form>
+
+    {% if routine %}
+    <div class="form-card mt-2 fade-in">
+      <h2 class="text-center">Your Workout Routine</h2>
+      <ul class="plan-list mt-1">
+        {% for exercise in routine %}
+        <li><i class="fas fa-check" style="color:var(--brand-orange)"></i> {{ exercise }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

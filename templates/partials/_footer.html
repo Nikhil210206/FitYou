@@ -1,0 +1,31 @@
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <a class="brand" href="{{ url_for('home') }}"><i class="fas fa-dumbbell"></i><span>FitYou</span></a>
+      <p class="mt-1">Your AI-powered fitness companion — smart workout routines, personalized meal plans, and a coach in your pocket.</p>
+      <div class="footer-social">
+        <a href="https://github.com/Nikhil210206" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/nikhilb21/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="https://www.instagram.com/nikhiiiiiillllll/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="{{ url_for('work') }}">Workouts</a>
+      <a href="{{ url_for('diet_plan') }}">Diet Plans</a>
+      <a href="{{ url_for('sports') }}">Sports Routines</a>
+      <a href="{{ url_for('yoga') }}">Yoga</a>
+      <a href="{{ url_for('ai_coach') }}">AI Coach</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="{{ url_for('about') }}">About</a>
+      <a href="{{ url_for('coaches') }}">Coaches</a>
+      <a href="{{ url_for('privacy_policy') }}">Privacy Policy</a>
+      <a href="{{ url_for('terms_of_service') }}">Terms of Service</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; {{ current_year }} FitYou. Built for people who love to move.
+  </div>
+</footer>

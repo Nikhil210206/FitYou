@@ -1,184 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}Log In — FitYou{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>FitYou - Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f7fa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+{% block content %}
+<section class="auth-wrap">
+  <div class="auth-card fade-in">
+    <h2>Welcome back</h2>
+    <p class="sub">Log in to access your AI coach and personalized plans.</p>
 
-        .login-container {
-            background: white;
-            padding: 30px;
-            width: 100%;
-            max-width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+    <form action="{{ url_for('login', next=request.args.get('next')) }}" method="POST">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Your password" required />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Log In</button>
+    </form>
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        label {
-            display: block;
-            margin-top: 12px;
-            text-align: left;
-            font-weight: bold;
-            color: #555;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 20px;
-            background: #333;
-            color: white;
-            font-size: 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background: #ff9800;
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        .register-link a {
-            color: #ff9800;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 20px;
-            }
-
-            h2 {
-                font-size: 20px;
-            }
-        }
-
-        .error {
-            color: red;
-            font-size: 13px;
-            margin-top: 3px;
-            text-align: left;
-        }
-
-        .flash {
-            padding: 10px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .flash.error {
-            background: #fdecea;
-            color: #b71c1c;
-            border: 1px solid #f5c6cb;
-        }
-
-        .flash.success {
-            background: #e8f5e9;
-            color: #1b5e20;
-            border: 1px solid #c3e6cb;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="login-container">
-        <h2>Welcome Back</h2>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="flash {{ category }}">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-
-        <form id="loginForm" action="{{ url_for('login', next=request.args.get('next')) }}" method="POST">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            <div class="error" id="emailError"></div>
-
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            <div class="error" id="passwordError"></div>
-
-            <button type="submit">Log In</button>
-        </form>
-
-        <!-- New User Link -->
-        <div class="register-link">
-            New user? <a href="{{ url_for('register') }}">Click here</a>
-        </div>
-        <div class="register-link">
-            <a href="{{ url_for('home') }}">← Back to Home</a>
-        </div>
-    </div>
-
-    <script>
-        // Lightweight client-side hints; the server still validates everything.
-        const form = document.getElementById('loginForm');
-        form.addEventListener('submit', function (e) {
-            let valid = true;
-            document.querySelectorAll('.error').forEach(el => el.textContent = '');
-
-            const email = document.getElementById('email').value.trim();
-            const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,}$/i;
-            if (!email.match(emailPattern)) {
-                document.getElementById('emailError').textContent = "Enter a valid email.";
-                valid = false;
-            }
-
-            const password = document.getElementById('password').value;
-            if (password.length < 6) {
-                document.getElementById('passwordError').textContent = "Password must be at least 6 characters.";
-                valid = false;
-            }
-
-            if (!valid) e.preventDefault();
-        });
-    </script>
-</body>
-
-</html>
+    <p class="auth-alt">New here? <a href="{{ url_for('register') }}">Create an account</a></p>
+  </div>
+</section>
+{% endblock %}

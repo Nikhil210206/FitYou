@@ -1,142 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About Fit You - Your AI-powered Fitness Coach</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      href="{{ url_for('static', filename='images/faviconn.png') }}"
-    />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}" />
-  </head>
-  <body>
-    <header>
-      <nav>
-        <div class="logo">
-          <i class="fas fa-dumbbell logo-icon"></i>
-          <h3>Fit You</h3>
-        </div>
-        <div class="nav-links">
-          <a href="/" >Home</a>
-          {% if current_user.is_authenticated %}
-          <a href="{{ url_for('logout') }}">Logout</a>
-          {% else %}
-          <a href="{{ url_for('login') }}">Login</a>
-          {% endif %}
-        </div>
-      </nav>
-    </header>
-    <main>
-      <!-- Hero Section -->
-      <section class="hero-section fade-in">
-        <h1>Transforming Lives Through Fitness</h1>
-        <p>
-          At Fit You, we believe fitness is not just about workouts – it's about building a lifestyle that keeps you healthy, motivated, and confident. Our AI-powered platform is designed to help you take control of your wellness journey, no matter where you're starting from.
-        </p>
-      </section>
+{% extends "base.html" %}
+{% block title %}About — FitYou{% endblock %}
 
-      <!-- Mission Section -->
-      <section class="content-section fade-in">
-        <h2>Our Mission</h2>
-        <p class="text-center">
-          Our mission is simple: to empower individuals to achieve their health and fitness goals through personalized guidance, progress tracking, and community support. We aim to make fitness accessible, enjoyable, and sustainable for everyone.
-        </p>
-      </section>
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow">About FitYou</span>
+    <h1>Transforming lives through <span class="text-gradient">fitness</span></h1>
+    <p>Fitness isn't just about workouts — it's about building a lifestyle that keeps you healthy, motivated, and confident. Our AI-powered platform helps you take control of your wellness journey, wherever you're starting from.</p>
+  </div>
+</section>
 
-      <!-- Vision Section -->
-      <section class="content-section fade-in">
-        <h2>Our Vision</h2>
-        <p class="text-center">
-          We envision a world where staying fit isn't a struggle but a natural part of daily life. With Fit You, we're creating a space where technology and motivation come together to inspire long-lasting healthy habits.
-        </p>
-      </section>
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="grid grid-2">
+      <div class="card">
+        <h2 class="text-gradient" style="font-size:1.6rem;margin-bottom:12px">Our Mission</h2>
+        <p class="muted">To empower individuals to achieve their health and fitness goals through personalized guidance, progress tracking, and community support — making fitness accessible, enjoyable, and sustainable for everyone.</p>
+      </div>
+      <div class="card">
+        <h2 class="text-gradient" style="font-size:1.6rem;margin-bottom:12px">Our Vision</h2>
+        <p class="muted">A world where staying fit isn't a struggle but a natural part of daily life — where technology and motivation come together to inspire long-lasting healthy habits.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <!-- Benefits Section -->
-      <section class="content-section fade-in">
-        <h2>Why Choose Fit You?</h2>
-        <div class="benefits-grid">
-          <div class="benefit-card fade-in">
-            <i class="fas fa-user-cog"></i>
-            <h3>Personalized Plans</h3>
-            <p>Get workout and wellness routines tailored to your goals, fitness level, and lifestyle preferences.</p>
-          </div>
-          <div class="benefit-card fade-in">
-            <i class="fas fa-chart-line"></i>
-            <h3>Progress Tracking</h3>
-            <p>Monitor your improvements with detailed analytics and visual progress reports to stay motivated.</p>
-          </div>
-          <div class="benefit-card fade-in">
-            <i class="fas fa-mobile-alt"></i>
-            <h3>User-Friendly Design</h3>
-            <p>Simple, intuitive interface that's accessible to all users, from beginners to fitness enthusiasts.</p>
-          </div>
-          <div class="benefit-card fade-in">
-            <i class="fas fa-users"></i>
-            <h3>Community Support</h3>
-            <p>Join a community of like-minded individuals who inspire and support each other on their fitness journey.</p>
-          </div>
-          <div class="benefit-card fade-in">
-            <i class="fas fa-brain"></i>
-            <h3>AI-Powered Coaching</h3>
-            <p>24/7 access to your virtual fitness coach for guidance, motivation, and personalized recommendations.</p>
-          </div>
-          <div class="benefit-card fade-in">
-            <i class="fas fa-seedling"></i>
-            <h3>Consistency & Growth</h3>
-            <p>Build long-term habits with our proven system that focuses on sustainable progress, not quick fixes.</p>
-          </div>
-        </div>
-      </section>
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="section-head">
+      <h2 class="section-title">Why choose <span class="text-gradient">FitYou</span>?</h2>
+    </div>
+    <div class="grid grid-3">
+      <div class="card feature-card"><div class="icon"><i class="fas fa-user-cog"></i></div><h3>Personalized Plans</h3><p>Routines tailored to your goals, fitness level, and lifestyle.</p></div>
+      <div class="card feature-card"><div class="icon"><i class="fas fa-chart-line"></i></div><h3>Progress Tracking</h3><p>Monitor improvements and stay motivated with clear insights.</p></div>
+      <div class="card feature-card"><div class="icon"><i class="fas fa-mobile-alt"></i></div><h3>User-Friendly Design</h3><p>A simple, intuitive interface for beginners and pros alike.</p></div>
+      <div class="card feature-card"><div class="icon"><i class="fas fa-users"></i></div><h3>Community Support</h3><p>Train alongside people who inspire and support each other.</p></div>
+      <div class="card feature-card"><div class="icon"><i class="fas fa-brain"></i></div><h3>AI-Powered Coaching</h3><p>24/7 access to your virtual coach for guidance and motivation.</p></div>
+      <div class="card feature-card"><div class="icon"><i class="fas fa-seedling"></i></div><h3>Consistency &amp; Growth</h3><p>Build lasting habits with a system focused on sustainable progress.</p></div>
+    </div>
+  </div>
+</section>
 
-      <!-- Stats Section -->
-      <section class="stats-section fade-in">
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-number">10K+</div>
-            <div class="stat-label">Active Users</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">50K+</div>
-            <div class="stat-label">Workouts Completed</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">95%</div>
-            <div class="stat-label">User Satisfaction</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">24/7</div>
-            <div class="stat-label">AI Support</div>
-          </div>
-        </div>
-      </section>
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="card">
+      <div class="stats-grid">
+        <div class="stat"><span class="stat-number text-gradient">10K+</span><span class="stat-label">Active Users</span></div>
+        <div class="stat"><span class="stat-number text-gradient">50K+</span><span class="stat-label">Workouts Completed</span></div>
+        <div class="stat"><span class="stat-number text-gradient">95%</span><span class="stat-label">User Satisfaction</span></div>
+        <div class="stat"><span class="stat-number text-gradient">24/7</span><span class="stat-label">AI Support</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <!-- Community Section -->
-      <section class="content-section fade-in">
-        <h2>Our Community</h2>
-        <p class="text-center">
-          Behind Fit You is a passionate team of developers, fitness enthusiasts, and wellness advocates who believe in the power of consistency. But most importantly, it's about you and our growing community—a place where everyone supports each other on the journey to a healthier lifestyle.
-        </p>
-      </section>
-
-      <!-- CTA Section -->
-      <section class="cta-section fade-in">
-        <h2>Ready to Start Your Journey?</h2>
-        <p>Join thousands of users who have already transformed their lives with Fit You</p>
-        <a href="/gen" class="cta-btn">Get Started Today <i class="fas fa-rocket"></i></a>
-      </section>
-    </main>
-    <footer>
-      &copy; 2024 Fit You. All rights reserved.
-    </footer>
-  </body>
-</html>
+<section class="section" style="padding-top:0">
+  <div class="container text-center">
+    <div class="card">
+      <h2 class="section-title">Ready to start your journey?</h2>
+      <p class="section-subtitle" style="margin-bottom:24px">Join thousands who have already transformed their lives with FitYou.</p>
+      <a href="{{ url_for('generate') }}" class="btn btn-primary btn-lg">Get Started Today <i class="fas fa-rocket"></i></a>
+    </div>
+  </div>
+</section>
+{% endblock %}

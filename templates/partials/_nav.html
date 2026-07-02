@@ -1,0 +1,31 @@
+<header class="site-header">
+  <nav class="navbar">
+    <a class="brand" href="{{ url_for('home') }}">
+      <i class="fas fa-dumbbell"></i><span>FitYou</span>
+    </a>
+
+    <ul class="nav-links" id="nav-links">
+      <li><a href="{{ url_for('home') }}" class="{{ 'active' if active_page == 'home' }}">Home</a></li>
+      <li><a href="{{ url_for('work') }}" class="{{ 'active' if active_page == 'workout' }}">Workout</a></li>
+      <li><a href="{{ url_for('diet_plan') }}" class="{{ 'active' if active_page == 'diet' }}">Diet</a></li>
+      <li><a href="{{ url_for('sports') }}" class="{{ 'active' if active_page == 'sports' }}">Sports</a></li>
+      <li><a href="{{ url_for('yoga') }}" class="{{ 'active' if active_page == 'yoga' }}">Yoga</a></li>
+      <li><a href="{{ url_for('coaches') }}" class="{{ 'active' if active_page == 'coaches' }}">Coaches</a></li>
+      <li><a href="{{ url_for('ai_coach') }}" class="{{ 'active' if active_page == 'ai_coach' }}">AI Coach</a></li>
+      {% if current_user.is_authenticated %}
+      <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      {% else %}
+      <li><a href="{{ url_for('login') }}" class="{{ 'active' if active_page == 'login' }}">Login</a></li>
+      {% endif %}
+    </ul>
+
+    <div class="nav-actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
+        <i class="fas fa-moon"></i><i class="fas fa-sun"></i>
+      </button>
+      <button class="nav-toggle" data-nav-toggle aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+</header>
