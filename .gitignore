@@ -11,6 +11,11 @@ __pycache__/
 *.pyc
 instance/
 
+# Local databases (dev only; production uses DATABASE_URL)
+*.db
+*.sqlite
+*.sqlite3
+
 # OS / editor
 .DS_Store
 .idea/

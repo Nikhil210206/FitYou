@@ -95,40 +95,70 @@ init_db()
 
 # --- AI Chatbot Core Functionality ---
 
-# STEP 3: REPLACED THE OLD FUNCTION WITH THE NEW GEMINI-POWERED FUNCTION
+# Google retires older Gemini models over time. Keep the default on a current
+# model and try a chain of fallbacks so the coach keeps working even after a
+# model is deprecated. `gemini-flash-latest` always points at the newest Flash.
+RETIRED_GEMINI_MODELS = {"gemini-pro", "gemini-1.0-pro", "gemini-1.5-flash", "gemini-1.5-pro"}
+DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_FALLBACK_MODELS = ["gemini-flash-latest", "gemini-2.0-flash", "gemini-2.5-flash"]
+
+SYSTEM_PROMPT = (
+    "You are FitAI, a professional, friendly, and encouraging AI fitness coach. "
+    "Your expertise includes workout routines, nutrition, injury prevention, and motivation. "
+    "Provide safe, clear, and actionable advice. If a question is outside the scope of "
+    "fitness, health, or nutrition, you must politely state that you can only answer fitness-related questions. "
+    "Keep your responses focused and easy to understand."
+)
+
+
+def _candidate_models():
+    """Ordered, de-duplicated list of models to try (env override first)."""
+    configured = os.getenv("GEMINI_MODEL", "").strip()
+    candidates = []
+    # Ignore a stale/retired value even if it's still set in the environment.
+    if configured and configured not in RETIRED_GEMINI_MODELS:
+        candidates.append(configured)
+    candidates.append(DEFAULT_GEMINI_MODEL)
+    candidates.extend(GEMINI_FALLBACK_MODELS)
+    seen = set()
+    return [m for m in candidates if not (m in seen or seen.add(m))]
+
+
 def chat_with_fitness_ai(message):
     """
     Handles conversation with the Gemini API to provide fitness advice.
     """
     api_key = os.getenv("GEMINI_API_KEY")
-    
+
     if not api_key:
-        logger.error("Gemini API key is not configured in .env file.")
+        logger.error("Gemini API key is not configured in the environment.")
         return "Error: The AI Coach is not configured correctly. Please contact the administrator."
-    
+
     try:
         genai.configure(api_key=api_key)
-        
-        system_prompt = (
-            "You are FitAI, a professional, friendly, and encouraging AI fitness coach. "
-            "Your expertise includes workout routines, nutrition, injury prevention, and motivation. "
-            "Provide safe, clear, and actionable advice. If a question is outside the scope of "
-            "fitness, health, or nutrition, you must politely state that you can only answer fitness-related questions. "
-            "Keep your responses focused and easy to understand."
-        )
-        
-        full_prompt = f"{system_prompt}\n\nUser's question: {message}"
-
-        # 'gemini-pro' was retired; use a current model (overridable via env).
-        model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
-        model = genai.GenerativeModel(model_name)
-        response = model.generate_content(full_prompt)
-
-        return response.text
-    
     except Exception as e:
-        logger.error(f"An error occurred with the Gemini API: {e}")
-        return "Sorry, I'm having a little trouble connecting to my brain right now. Please try again in a moment."
+        logger.error(f"Failed to configure Gemini client: {e}")
+        return "Sorry, the AI Coach is temporarily unavailable. Please try again later."
+
+    full_prompt = f"{SYSTEM_PROMPT}\n\nUser's question: {message}"
+
+    last_error = None
+    for model_name in _candidate_models():
+        try:
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content(full_prompt)
+            text = (getattr(response, "text", "") or "").strip()
+            if text:
+                return text
+            last_error = f"Empty response from {model_name}"
+            logger.warning(last_error)
+        except Exception as e:
+            last_error = f"{model_name}: {e}"
+            logger.warning(f"Gemini model '{model_name}' failed: {e}")
+            continue
+
+    logger.error(f"All Gemini models failed. Last error: {last_error}")
+    return "Sorry, I'm having a little trouble connecting to my brain right now. Please try again in a moment."
 
 # --- Workout Plan Generator ---
 
@@ -208,6 +238,95 @@ def calculate_intensity(weight, height):
         return 60
     else:
         return 40
+
+# --- Sports / Level-based Routine Generator ---
+
+# Keywords used to classify the exercises in exercises.csv into training styles,
+# since the CSV only tags warmup/exercise/cooldown.
+_CARDIO_KEYWORDS = (
+    'jump', 'jack', 'burpee', 'mountain climber', 'high knee', 'butt kick',
+    'sprint', 'skater', 'run', 'tuck', 'crab', 'bear crawl', 'sprawl',
+    'knee tuck', 'plyometric', 'hill climber', 'frog', 'kick',
+)
+_FLEX_KEYWORDS = (
+    'stretch', 'cobra', 'child', 'cat-cow', 'yoga', 'rotation', 'circle',
+    'twist', 'mobility', 'forward bend', 'figure four', "cat", 'swing', 'bend',
+)
+
+# Per-level tuning: how many moves per block and how sets/reps scale.
+_LEVEL_SETTINGS = {
+    'beginner':     {'strength': 4, 'cardio': 3, 'flexibility': 3, 'sets': 2, 'rep_bias': 0.0},
+    'intermediate': {'strength': 5, 'cardio': 4, 'flexibility': 3, 'sets': 3, 'rep_bias': 0.5},
+    'advanced':     {'strength': 6, 'cardio': 4, 'flexibility': 4, 'sets': 4, 'rep_bias': 1.0},
+}
+
+
+def _classify_exercise(name):
+    lname = str(name).lower()
+    if any(k in lname for k in _FLEX_KEYWORDS):
+        return 'flexibility'
+    if any(k in lname for k in _CARDIO_KEYWORDS):
+        return 'cardio'
+    return 'strength'
+
+
+def _reps_for(row, rep_bias):
+    """Pick a rep count within the exercise's range, biased higher by level."""
+    reps_min = row.get('reps_min')
+    reps_max = row.get('reps_max')
+    if pd.notnull(reps_min) and pd.notnull(reps_max) and int(reps_max) > 0:
+        lo, hi = int(reps_min), int(reps_max)
+        if hi < lo:
+            lo, hi = hi, lo
+        base = random.randint(lo, hi)
+        # Nudge toward the top of the range for higher levels.
+        return min(hi, int(round(base + (hi - base) * rep_bias)))
+    return None
+
+
+def _duration_for(row):
+    dur_min = row.get('duration_min')
+    dur_max = row.get('duration_max')
+    if pd.notnull(dur_min) and pd.notnull(dur_max) and int(dur_max) > 0:
+        return f"{random.randint(int(dur_min), int(dur_max))} seconds"
+    return f"{random.choice([30, 40, 45, 60])} seconds"
+
+
+def generate_sport_routine(level):
+    """Build a varied, level-appropriate routine grouped into strength/cardio/flexibility."""
+    level = (level or '').strip().lower()
+    settings = _LEVEL_SETTINGS.get(level, _LEVEL_SETTINGS['beginner'])
+
+    df = load_exercises()
+    routine = {'strength': [], 'cardio': [], 'flexibility': []}
+
+    if df.empty:
+        routine['strength'] = [{'exercise': 'Push-ups', 'sets': settings['sets'], 'reps': 10}]
+        routine['cardio'] = [{'exercise': 'Jumping Jacks', 'duration': '45 seconds'}]
+        routine['flexibility'] = [{'exercise': 'Full-body stretch', 'duration': '60 seconds'}]
+        return routine
+
+    # Bucket every exercise by its inferred training style.
+    buckets = {'strength': [], 'cardio': [], 'flexibility': []}
+    for _, row in df.iterrows():
+        buckets[_classify_exercise(row['exercise_name'])].append(row)
+
+    for block in ('strength', 'cardio', 'flexibility'):
+        pool = buckets[block]
+        random.shuffle(pool)
+        chosen = pool[:settings[block]]
+        for row in chosen:
+            name = row['exercise_name']
+            if block == 'strength':
+                reps = _reps_for(row, settings['rep_bias'])
+                if reps:
+                    routine['strength'].append({'exercise': name, 'sets': settings['sets'], 'reps': reps})
+                else:
+                    routine['strength'].append({'exercise': name, 'duration': _duration_for(row)})
+            else:
+                routine[block].append({'exercise': name, 'duration': _duration_for(row)})
+
+    return routine
 
 # --- Diet Plan Generator ---
 
@@ -491,15 +610,23 @@ def diet_plan():
 
 @app.route('/sport', methods=['GET', 'POST'])
 def sports():
-    """Render the sports page with a placeholder routine."""
+    """Render the sports page, or generate a level-based routine on POST."""
     if request.method == 'POST':
-        fitness_level = request.form.get('fitness_level')
-        if fitness_level:
+        # Accept both form posts and JSON (the page fetches JSON).
+        data = request.get_json(silent=True) or request.form
+        fitness_level = (data.get('fitness_level') or '').strip()
+        if not fitness_level:
+            return jsonify({'status': 'error', 'error': 'Please choose a fitness level.'}), 400
+        try:
+            routine = generate_sport_routine(fitness_level)
             return jsonify({
                 'status': 'success',
                 'level': fitness_level,
-                'routine': True
+                'routine': routine,
             })
+        except Exception as e:
+            logger.error(f"Error generating sport routine: {e}")
+            return jsonify({'status': 'error', 'error': 'Could not generate a routine right now.'}), 500
     return render_template('sports.html')
 
 @app.route("/workout")

@@ -35,7 +35,7 @@ This project supports automatic deployment when pull requests are merged to the 
 | `GEMINI_API_KEY` | Yes | Your Google Gemini API key ([get one](https://aistudio.google.com/app/apikey)). |
 | `SECRET_KEY` | Yes | Long random string for Flask sessions. Generate: `python -c "import secrets; print(secrets.token_hex(32))"`. |
 | `DATABASE_URL` | Yes on Vercel | Postgres connection string. Locally defaults to a SQLite file if unset. |
-| `GEMINI_MODEL` | No | Overrides the model (default `gemini-1.5-flash`). |
+| `GEMINI_MODEL` | No | Overrides the model (default `gemini-2.5-flash`). Retired models are ignored automatically. |
 | `PYTHONPATH` | No | Set to `.` (already configured in `vercel.json`). |
 
 > Local development: copy `env_template.txt` to `.env` and fill in the values. Tables are created automatically on first run.

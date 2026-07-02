@@ -1470,7 +1470,7 @@
             element.classList.add('active');
         }
 
-        function handleSubmit(event) {
+        async function handleSubmit(event) {
             event.preventDefault();
             const fitnessLevel = document.getElementById('fitness_level').value;
 
@@ -1485,12 +1485,27 @@
             generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
             generateBtn.disabled = true;
 
+            // Fetch a fresh, randomized routine from the backend (falls back to
+            // the built-in sample data if the request fails).
+            let routineData = workoutData[fitnessLevel];
+            try {
+                const res = await fetch('/sport', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fitness_level: fitnessLevel })
+                });
+                const data = await res.json();
+                if (data.status === 'success' && data.routine) {
+                    routineData = data.routine;
+                }
+            } catch (err) {
+                console.error('Falling back to sample routine:', err);
+            }
+
             // Display routine section
             const routineResultsSection = document.getElementById('routineResults');
             routineResultsSection.style.display = 'block';
 
-            // Update routine based on fitness level
-            const routineData = workoutData[fitnessLevel];
             if (routineData) {
                 // Update strength exercises
                 const strengthList = document.getElementById('strengthExercises');
