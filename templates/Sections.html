@@ -773,6 +773,11 @@
                 <a href="/diet-plan"><i class="fas fa-utensils"></i> Nutrition</a>
                 <a href="/yoga"><i class="fas fa-om"></i> Yoga</a>
                 <a href="/ai-coach"><i class="fas fa-robot"></i> AI Coach</a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                {% endif %}
                 <div class="theme-toggle-container">
                     <button id="theme-toggle-desktop" class="theme-toggle" aria-label="Toggle theme">
                         <i class="fas fa-moon"></i>
@@ -793,6 +798,11 @@
             <a href="/diet-plan"><i class="fas fa-utensils"></i> Nutrition</a>
             <a href="/yoga"><i class="fas fa-om"></i> Yoga</a>
             <a href="/ai-coach"><i class="fas fa-robot"></i> AI Coach</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+            {% endif %}
             <button id="theme-toggle-mobile" class="theme-toggle" aria-label="Toggle theme">
                 <i class="fas fa-moon"></i>
                 <i class="fas fa-sun"></i>

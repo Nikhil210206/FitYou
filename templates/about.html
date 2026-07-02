@@ -28,6 +28,11 @@
         </div>
         <div class="nav-links">
           <a href="/" >Home</a>
+          {% if current_user.is_authenticated %}
+          <a href="{{ url_for('logout') }}">Logout</a>
+          {% else %}
+          <a href="{{ url_for('login') }}">Login</a>
+          {% endif %}
         </div>
       </nav>
     </header>

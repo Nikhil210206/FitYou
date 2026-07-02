@@ -730,11 +730,19 @@
               <i class="fas fa-user-friends"></i> Coaches
             </a>
           </li>
-          <!-- <li class="nav-item">
-              <a class="nav-link active" href="{{ url_for('ai_coach') }}" onclick="setActiveNav(this)">
-                <i class="fas fa-robot"></i> AI Coach
-              </a>
-            </li> -->
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('logout') }}">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login') }}">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+          </li>
+          {% endif %}
           <li class="nav-item d-lg-none">
             <button class="btn toggle-theme-btn">
               <i class="fas fa-sun"></i>

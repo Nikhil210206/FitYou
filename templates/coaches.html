@@ -149,9 +149,15 @@
                     <i id="moon-icon" class="fas fa-moon text-xl"></i>
                     <i id="sun-icon" class="fas fa-sun text-xl hidden"></i>
                 </button>
-                <button class="hidden md:flex items-center justify-center h-10 w-24 bg-[#4361ee] text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}" class="hidden md:flex items-center justify-center h-10 w-24 bg-[#4361ee] text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                    Logout
+                </a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="hidden md:flex items-center justify-center h-10 w-24 bg-[#4361ee] text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
                     Sign In
-                </button>
+                </a>
+                {% endif %}
             </div>
         </nav>
     </header>

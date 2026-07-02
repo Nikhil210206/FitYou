@@ -457,6 +457,11 @@
                 <a href="/diet">Nutrition</a>
                 <a href="{{ url_for('yoga') }}" class="active">Yoga</a>
                 <a href="{{ url_for('ai_coach') }}">AI Coach</a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                {% endif %}
 
             </div>
             <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle">
@@ -476,6 +481,11 @@
             <a href="/diet">Nutrition</a>
             <a href="{{ url_for('yoga') }}" class="active">Yoga</a>
             <a href="{{ url_for('ai_coach') }}">AI Coach</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
 
         </div>
     </div>
