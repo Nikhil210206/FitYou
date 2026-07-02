@@ -1,5 +1,0 @@
-gradio
-pandas
-requests
-Flask
-flask-cors
