@@ -1,7 +1,20 @@
-# FitAI Environment Variables
-# Copy this file to .env and fill in your actual values
-# Get your Gemini API key from: https://makersuite.google.com/app/apikey
+# FitYou / FitAI — Environment Variables
+# Copy this file to `.env` and fill in your own values.
+# NEVER commit a real .env file (it is gitignored).
 
-GEMINI_API_KEY=AIzaSyAfhrTWHI863js_WJalovwT_07sQLxCSsM
-SECRET_KEY=fitai_local_development_secret_12345
+# --- AI (Google Gemini) ---
+# Get a key from: https://aistudio.google.com/app/apikey
+GEMINI_API_KEY=your_gemini_api_key_here
+# Optional: override the model (defaults to gemini-1.5-flash)
+GEMINI_MODEL=gemini-1.5-flash
 
+# --- Flask ---
+# Generate one with: python -c "import secrets; print(secrets.token_hex(32))"
+SECRET_KEY=change_this_to_a_long_random_string
+
+# --- Database (authentication) ---
+# Local development defaults to a local SQLite file if unset.
+# On Vercel/production the filesystem is read-only, so use a hosted
+# Postgres URL (e.g. Neon or Vercel Postgres):
+#   DATABASE_URL=postgresql://user:password@host/dbname
+DATABASE_URL=

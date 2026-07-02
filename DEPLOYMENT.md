@@ -22,11 +22,23 @@ This project supports automatic deployment when pull requests are merged to the 
 - **Free tier**: 3 VMs, 2,160 hours/month
 - **GitHub Secret**: Add `FLY_API_TOKEN`
 
+### 4. Vercel
+
+- **Setup**: Import the repo at [vercel.com](https://vercel.com); the `vercel.json` routes all traffic to the Flask app (`app.py`).
+- **Important**: Vercel's filesystem is read-only/ephemeral, so SQLite cannot be used for auth. You **must** provision a hosted Postgres database (e.g. [Neon](https://neon.tech) or Vercel Postgres) and set `DATABASE_URL`.
+- Add the environment variables below in the Vercel dashboard.
+
 ## Environment Variables Required
 
-All platforms need these environment variables:
-- `GEMINI_API_KEY` - Your Google Gemini API key
-- `PYTHONPATH` - Set to "." (already configured)
+| Variable | Required | Notes |
+| --- | --- | --- |
+| `GEMINI_API_KEY` | Yes | Your Google Gemini API key ([get one](https://aistudio.google.com/app/apikey)). |
+| `SECRET_KEY` | Yes | Long random string for Flask sessions. Generate: `python -c "import secrets; print(secrets.token_hex(32))"`. |
+| `DATABASE_URL` | Yes on Vercel | Postgres connection string. Locally defaults to a SQLite file if unset. |
+| `GEMINI_MODEL` | No | Overrides the model (default `gemini-1.5-flash`). |
+| `PYTHONPATH` | No | Set to `.` (already configured in `vercel.json`). |
+
+> Local development: copy `env_template.txt` to `.env` and fill in the values. Tables are created automatically on first run.
 
 ## GitHub Actions Workflow
 

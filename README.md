@@ -82,7 +82,6 @@ The FitAi project follows a consolidated structure where both frontend (React) a
 ├── .hintrc                        # Configuration for code linting/formatting  
 ├── .vercelignore                  # Files to ignore during Vercel deployment  
 ├── app.py                         # Main Flask application entry point  
-├── app_gradio.py                  # Gradio-based app for demos/features  
 ├── DEPLOYMENT.md                  # Deployment instructions & guidelines  
 ├── diet_data.csv                  # Dataset containing diet-related data  
 ├── env_template.txt               # Template for environment variable setup  
@@ -93,10 +92,8 @@ The FitAi project follows a consolidated structure where both frontend (React) a
 ├── package.json                   # Frontend project metadata & npm scripts  
 ├── postcss.config.js              # PostCSS (CSS processor) configuration  
 ├── README.md                      # Main project documentation  
-├── README_HUGGINGFACE.md          # Documentation for Hugging Face deployment  
 ├── render.yaml                    # Deployment configuration for Render  
 ├── requirements.txt               # Python dependencies for Flask backend  
-├── requirements_gradio.txt        # Python dependencies for Gradio app  
 ├── runtime.txt                    # Python runtime version specification  
 ├── SECURITY.md                    # Security policy for contributors/users  
 ├── tailwind.config.js             # Tailwind CSS configuration file  

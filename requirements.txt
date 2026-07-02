@@ -1,6 +1,12 @@
-Flask
-pandas
-python-dotenv
-google-generativeai>=0.4.0
-requests
-gunicorn
+Flask==3.1.3
+Flask-Login==0.6.3
+Flask-SQLAlchemy==3.1.1
+Flask-Cors==6.0.5
+Werkzeug==3.1.8
+SQLAlchemy==2.0.51
+pandas==3.0.3
+google-generativeai==0.8.6
+python-dotenv==1.2.2
+gunicorn==26.0.0
+# Postgres driver (used in production, e.g. on Vercel/Render via DATABASE_URL)
+psycopg2-binary==2.9.9

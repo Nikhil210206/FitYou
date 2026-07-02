@@ -2,3 +2,15 @@
 venv/
 node_modules
 node_modules/
+
+# Local working notes (not for the repo)
+PROJECT_FIXES.md
+
+# Python
+__pycache__/
+*.pyc
+instance/
+
+# OS / editor
+.DS_Store
+.idea/

@@ -1,10 +1,73 @@
-food_item,meal_type,calories,protein,fats,carbs,diet_type
-Oatmeal with Milk,Breakfast,300,10,5,45,weight_loss
-Scrambled Eggs,Breakfast,150,12,10,2,weight_gain
-Grilled Chicken,Lunch,250,35,5,0,weight_loss
-Chicken Breast,Lunch,300,30,10,5,weight_gain
-Green Salad,Dinner,120,2,4,15,weight_loss
-Steamed Veggies,Snack,80,3,1,15,weight_loss
-Protein Shake,Snack,200,25,2,10,weight_gain
-Chapati,Dinner,120,3,5,20,weight_loss
-Greek Yogurt,Before Bed,100,10,5,5,weight_loss
+food_item,meal_type,calories,protein,fats,carbs,goal,diet_category
+Vegetable oats porridge,Breakfast,250,9,5,40,weight_loss,vegetarian
+Moong dal chilla with mint chutney,Breakfast,220,12,6,28,weight_loss,vegetarian
+Greek yogurt with berries,Breakfast,180,15,4,20,weight_loss,vegetarian
+Apple with a handful of almonds,Mid-Morning,150,4,8,18,weight_loss,vegetarian
+Cucumber and carrot sticks with hummus,Mid-Morning,120,5,4,16,weight_loss,vegetarian
+Green tea with 2 walnuts,Mid-Morning,90,2,7,4,weight_loss,vegetarian
+Quinoa salad with chickpeas and veggies,Lunch,350,15,9,48,weight_loss,vegetarian
+Brown rice with dal and sauteed spinach,Lunch,380,16,6,60,weight_loss,vegetarian
+Grilled paneer with mixed green salad,Lunch,320,20,18,12,weight_loss,vegetarian
+Roasted chana,Afternoon Snack,130,8,3,18,weight_loss,vegetarian
+Buttermilk with roasted cumin,Afternoon Snack,80,4,2,8,weight_loss,vegetarian
+Fruit bowl (papaya and watermelon),Afternoon Snack,110,2,1,26,weight_loss,vegetarian
+Vegetable soup with tofu,Dinner,260,16,8,22,weight_loss,vegetarian
+Multigrain roti with lauki sabzi,Dinner,300,11,8,45,weight_loss,vegetarian
+Grilled vegetable and paneer skewers,Dinner,290,18,15,14,weight_loss,vegetarian
+Warm turmeric milk (low fat),Before Bed,90,6,3,9,weight_loss,vegetarian
+Chamomile tea,Before Bed,5,0,0,1,weight_loss,vegetarian
+Egg white omelette with veggies,Breakfast,200,20,6,6,weight_loss,non-vegetarian
+Boiled eggs with whole-grain toast,Breakfast,240,18,10,18,weight_loss,non-vegetarian
+Grilled chicken breast with salad,Lunch,330,38,8,10,weight_loss,non-vegetarian
+Steamed fish with sauteed vegetables,Lunch,310,34,9,12,weight_loss,non-vegetarian
+Grilled chicken strips,Afternoon Snack,150,25,4,2,weight_loss,non-vegetarian
+Grilled fish with steamed broccoli,Dinner,300,35,9,10,weight_loss,non-vegetarian
+Chicken and vegetable clear soup,Dinner,220,26,6,12,weight_loss,non-vegetarian
+Vegetable poha with peanuts,Breakfast,320,8,10,48,maintenance,vegetarian
+Whole-wheat toast with peanut butter and banana,Breakfast,360,12,14,46,maintenance,vegetarian
+Idli with sambar,Breakfast,300,10,6,52,maintenance,vegetarian
+Banana with a glass of milk,Mid-Morning,190,8,4,32,maintenance,vegetarian
+Mixed nuts and raisins,Mid-Morning,200,6,14,14,maintenance,vegetarian
+Sprouts salad,Mid-Morning,160,10,3,24,maintenance,vegetarian
+Rajma with brown rice,Lunch,450,18,10,70,maintenance,vegetarian
+"Roti, paneer bhurji and salad",Lunch,470,22,20,42,maintenance,vegetarian
+Vegetable pulao with raita,Lunch,430,12,12,66,maintenance,vegetarian
+Masala chai with 2 whole-grain biscuits,Afternoon Snack,150,3,5,22,maintenance,vegetarian
+Fruit and yogurt smoothie,Afternoon Snack,180,8,4,28,maintenance,vegetarian
+Roasted makhana,Afternoon Snack,140,4,3,22,maintenance,vegetarian
+Roti with mixed vegetable curry,Dinner,420,14,12,60,maintenance,vegetarian
+Dal khichdi with a bowl of curd,Dinner,400,16,9,62,maintenance,vegetarian
+Stuffed paratha with curd,Dinner,440,13,16,58,maintenance,vegetarian
+Glass of warm milk,Before Bed,120,8,5,12,maintenance,vegetarian
+Herbal tea with a date,Before Bed,60,1,0,14,maintenance,vegetarian
+Scrambled eggs with toast,Breakfast,340,20,16,26,maintenance,non-vegetarian
+Chicken sausage with whole-grain bread,Breakfast,360,22,15,30,maintenance,non-vegetarian
+Chicken curry with rice,Lunch,520,34,16,58,maintenance,non-vegetarian
+Fish curry with steamed rice,Lunch,480,30,14,56,maintenance,non-vegetarian
+Boiled egg and a fruit,Afternoon Snack,170,12,6,16,maintenance,non-vegetarian
+Grilled chicken with roti and salad,Dinner,470,36,14,40,maintenance,non-vegetarian
+Egg curry with rice,Dinner,450,22,18,48,maintenance,non-vegetarian
+Paneer paratha with curd and ghee,Breakfast,520,22,26,48,weight_gain,vegetarian
+Banana peanut-butter oats with milk,Breakfast,550,20,20,68,weight_gain,vegetarian
+Aloo paratha with butter and lassi,Breakfast,560,16,24,66,weight_gain,vegetarian
+Full-fat milk with dates and nuts,Mid-Morning,320,12,14,38,weight_gain,vegetarian
+Peanut butter banana shake,Mid-Morning,380,14,16,44,weight_gain,vegetarian
+Cheese sandwich,Mid-Morning,340,14,16,34,weight_gain,vegetarian
+"Rice with rajma, paneer and ghee roti",Lunch,700,28,24,92,weight_gain,vegetarian
+Chole with rice and a bowl of curd,Lunch,680,24,20,98,weight_gain,vegetarian
+Vegetable biryani with raita,Lunch,660,18,22,96,weight_gain,vegetarian
+Trail mix with dried fruits and seeds,Afternoon Snack,350,10,22,30,weight_gain,vegetarian
+Mango milkshake,Afternoon Snack,320,9,8,54,weight_gain,vegetarian
+Paneer tikka,Afternoon Snack,300,20,18,10,weight_gain,vegetarian
+Paneer butter masala with naan,Dinner,720,26,34,74,weight_gain,vegetarian
+Dal makhani with jeera rice and ghee,Dinner,690,22,26,92,weight_gain,vegetarian
+Stuffed paratha with paneer and curd,Dinner,650,24,28,66,weight_gain,vegetarian
+Full-fat milk with honey and almonds,Before Bed,260,10,12,28,weight_gain,vegetarian
+Banana with a glass of milk,Before Bed,250,9,6,42,weight_gain,vegetarian
+3-egg omelette with cheese and toast,Breakfast,480,28,28,26,weight_gain,non-vegetarian
+Chicken keema with paratha,Breakfast,560,30,26,48,weight_gain,non-vegetarian
+Butter chicken with naan and rice,Lunch,780,42,30,82,weight_gain,non-vegetarian
+Mutton curry with rice,Lunch,760,40,34,74,weight_gain,non-vegetarian
+Chicken tikka with a boiled egg,Afternoon Snack,320,30,16,6,weight_gain,non-vegetarian
+Grilled chicken with mashed potato and rice,Dinner,700,45,22,70,weight_gain,non-vegetarian
+Fish fry with rice and dal,Dinner,680,36,26,72,weight_gain,non-vegetarian

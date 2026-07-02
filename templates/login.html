@@ -100,19 +100,48 @@
             margin-top: 3px;
             text-align: left;
         }
+
+        .flash {
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .flash.error {
+            background: #fdecea;
+            color: #b71c1c;
+            border: 1px solid #f5c6cb;
+        }
+
+        .flash.success {
+            background: #e8f5e9;
+            color: #1b5e20;
+            border: 1px solid #c3e6cb;
+        }
     </style>
 </head>
 
 <body>
     <div class="login-container">
         <h2>Welcome Back</h2>
-        <form id="loginForm">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form id="loginForm" action="{{ url_for('login', next=request.args.get('next')) }}" method="POST">
             <label for="email">Email</label>
-            <input type="email" id="email" placeholder="Enter your email">
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
             <div class="error" id="emailError"></div>
 
             <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Enter your password">
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
             <div class="error" id="passwordError"></div>
 
             <button type="submit">Log In</button>
@@ -120,38 +149,34 @@
 
         <!-- New User Link -->
         <div class="register-link">
-            New user? <a href="registration.html">Click here</a>
+            New user? <a href="{{ url_for('register') }}">Click here</a>
+        </div>
+        <div class="register-link">
+            <a href="{{ url_for('home') }}">← Back to Home</a>
         </div>
     </div>
 
     <script>
+        // Lightweight client-side hints; the server still validates everything.
         const form = document.getElementById('loginForm');
-
         form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
             let valid = true;
             document.querySelectorAll('.error').forEach(el => el.textContent = '');
 
-            // Email validation
             const email = document.getElementById('email').value.trim();
-            const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+            const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,}$/i;
             if (!email.match(emailPattern)) {
                 document.getElementById('emailError').textContent = "Enter a valid email.";
                 valid = false;
             }
 
-            // Password validation
-            const password = document.getElementById('password').value.trim();
+            const password = document.getElementById('password').value;
             if (password.length < 6) {
                 document.getElementById('passwordError').textContent = "Password must be at least 6 characters.";
                 valid = false;
             }
 
-            if (valid) {
-                alert("Login successful!");
-                window.location.href = "home.html"; // temporary redirect until backend
-            }
+            if (!valid) e.preventDefault();
         });
     </script>
 </body>

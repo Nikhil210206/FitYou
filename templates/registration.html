@@ -101,31 +101,60 @@
             margin-top: 3px;
             text-align: left;
         }
+
+        .flash {
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .flash.error {
+            background: #fdecea;
+            color: #b71c1c;
+            border: 1px solid #f5c6cb;
+        }
+
+        .flash.success {
+            background: #e8f5e9;
+            color: #1b5e20;
+            border: 1px solid #c3e6cb;
+        }
     </style>
 </head>
 
 <body>
     <div class="register-container">
         <h2>Create an Account</h2>
-        <form id="registerForm">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form id="registerForm" action="{{ url_for('register') }}" method="POST">
             <label for="name">Name</label>
-            <input type="text" id="name" placeholder="Enter your name">
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
             <div class="error" id="nameError"></div>
 
             <label for="email">Email</label>
-            <input type="email" id="email" placeholder="Enter your email">
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
             <div class="error" id="emailError"></div>
 
             <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Enter a password (min 6 chars)">
+            <input type="password" id="password" name="password" placeholder="Enter a password (min 6 chars)" required>
             <div class="error" id="passwordError"></div>
 
             <label for="age">Age</label>
-            <input type="number" id="age" placeholder="Enter your age">
+            <input type="number" id="age" name="age" placeholder="Enter your age">
             <div class="error" id="ageError"></div>
 
             <label for="gender">Gender</label>
-            <select id="gender">
+            <select id="gender" name="gender">
                 <option value="">--Select Gender--</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -134,7 +163,7 @@
             <div class="error" id="genderError"></div>
 
             <label for="goal">Fitness Goal</label>
-            <select id="goal">
+            <select id="goal" name="goal">
                 <option value="">--Select Goal--</option>
                 <option value="weight_loss">Weight Loss</option>
                 <option value="muscle_gain">Muscle Gain</option>
@@ -147,7 +176,10 @@
         </form>
 
         <div class="login-link">
-            Already have an account? <a href="login.html">Log in</a>
+            Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+        </div>
+        <div class="login-link">
+            <a href="{{ url_for('home') }}">← Back to Home</a>
         </div>
     </div>
 
@@ -155,8 +187,6 @@
         const form = document.getElementById('registerForm');
 
         form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
             let valid = true;
 
             // Reset errors
@@ -171,7 +201,7 @@
 
             // Email
             const email = document.getElementById('email').value.trim();
-            const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+            const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,}$/i;
             if (!email.match(emailPattern)) {
                 document.getElementById('emailError').textContent = "Enter a valid email.";
                 valid = false;
@@ -205,10 +235,7 @@
                 valid = false;
             }
 
-            if (valid) {
-                alert("Registration successful!");
-                window.location.href = "login.html"; // Temporary redirect (until backend added)
-            }
+            if (!valid) e.preventDefault();  // otherwise submit to the server
         });
     </script>
 </body>

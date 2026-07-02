@@ -1374,6 +1374,11 @@
           Personalized Routine</a>
         <a href="{{ url_for('coaches') }}" class="auth-btn primary-btn"><i class="fas fa-user-friends"></i> Coaches</a>
         <a href="{{ url_for('yoga') }}" class="auth-btn secondary-btn"><i class="fas fa-om"></i> Yoga</a>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout') }}" class="auth-btn primary-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="auth-btn primary-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+        {% endif %}
         <button class="toggle-theme" id="themeToggleDesktop">
           <i class="fas fa-moon"></i>
         </button>
@@ -1397,6 +1402,11 @@
         <a href="{{ url_for('workout_plan') }}"><i class="fas fa-user-cog"></i> Personalized Routine</a>
         <a href="{{ url_for('coaches') }}"><i class="fas fa-user-friends"></i> Coaches</a>
         <a href="{{ url_for('yoga') }}"><i class="fas fa-om"></i> Yoga</a>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+        {% endif %}
         <button class="toggle-theme" id="themeToggleMobile">
           <i class="fas fa-moon"></i>
         </button>

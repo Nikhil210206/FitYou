@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, jsonify, flash
+from flask import (
+    Flask, render_template, request, jsonify, flash, redirect, url_for
+)
 import random
 import pandas as pd
 import os
@@ -9,8 +11,22 @@ import logging
 import google.generativeai as genai
 from dotenv import load_dotenv
 
+# Authentication / database
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import (
+    LoginManager, UserMixin, login_user, logout_user,
+    login_required, current_user
+)
+from werkzeug.security import generate_password_hash, check_password_hash
+
 # STEP 2: LOAD ENVIRONMENT VARIABLES FROM .env FILE
 load_dotenv()
+
+# Resolve data files relative to this file so the app works regardless of the
+# current working directory (important on serverless hosts like Vercel).
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+EXERCISES_CSV = os.path.join(BASE_DIR, 'exercises.csv')
+DIET_CSV = os.path.join(BASE_DIR, 'diet_data.csv')
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'fallback-secret-key-change-in-production')
@@ -18,6 +34,64 @@ app.secret_key = os.getenv('SECRET_KEY', 'fallback-secret-key-change-in-producti
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# --- Database configuration ---------------------------------------------------
+# Use DATABASE_URL when provided (e.g. Postgres in production). Fall back to a
+# local SQLite file for development. Note: on read-only serverless filesystems
+# (Vercel) you MUST set DATABASE_URL to a hosted database, since SQLite cannot
+# be written to there.
+database_url = os.getenv('DATABASE_URL', '').strip()
+if database_url.startswith('postgres://'):
+    # SQLAlchemy requires the 'postgresql://' scheme.
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+if not database_url:
+    database_url = 'sqlite:///' + os.path.join(BASE_DIR, 'fityou.db')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'error'
+
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False, index=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    age = db.Column(db.Integer, nullable=True)
+    gender = db.Column(db.String(20), nullable=True)
+    goal = db.Column(db.String(40), nullable=True)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(User, int(user_id))
+
+
+def init_db():
+    """Create database tables if they don't exist yet."""
+    try:
+        with app.app_context():
+            db.create_all()
+    except Exception as e:
+        # Don't crash the whole app if the DB is unreachable; auth routes will
+        # surface a clear error instead.
+        logger.error(f"Could not initialize the database: {e}")
+
+
+init_db()
 
 # --- AI Chatbot Core Functionality ---
 
@@ -44,10 +118,12 @@ def chat_with_fitness_ai(message):
         )
         
         full_prompt = f"{system_prompt}\n\nUser's question: {message}"
-        
-        model = genai.GenerativeModel('gemini-pro')
+
+        # 'gemini-pro' was retired; use a current model (overridable via env).
+        model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+        model = genai.GenerativeModel(model_name)
         response = model.generate_content(full_prompt)
-        
+
         return response.text
     
     except Exception as e:
@@ -59,11 +135,11 @@ def chat_with_fitness_ai(message):
 def load_exercises():
     """Load exercises with error handling"""
     try:
-        if not os.path.exists('exercises.csv'):
+        if not os.path.exists(EXERCISES_CSV):
             logger.error("exercises.csv file not found")
             return pd.DataFrame()
-        
-        df = pd.read_csv('exercises.csv')
+
+        df = pd.read_csv(EXERCISES_CSV)
         required_columns = ['category', 'exercise_name', 'reps_min', 'reps_max']
         missing_columns = set(required_columns) - set(df.columns)
         
@@ -135,26 +211,59 @@ def calculate_intensity(weight, height):
 
 # --- Diet Plan Generator ---
 
+# Normalize the goal/diet values coming from the form (or a user profile) to the
+# canonical values used inside diet_data.csv.
+GOAL_ALIASES = {
+    'weight loss': 'weight_loss', 'weight_loss': 'weight_loss', 'lose weight': 'weight_loss',
+    'fat loss': 'weight_loss', 'cutting': 'weight_loss',
+    'weight gain': 'weight_gain', 'weight_gain': 'weight_gain', 'gain weight': 'weight_gain',
+    'muscle gain': 'weight_gain', 'muscle_gain': 'weight_gain', 'bulking': 'weight_gain',
+    'maintenance': 'maintenance', 'maintain': 'maintenance', 'maintain weight': 'maintenance',
+    'general fitness': 'maintenance', 'general_fitness': 'maintenance',
+    'strength training': 'maintenance', 'strength_training': 'maintenance',
+}
+
+DIET_CATEGORY_ALIASES = {
+    'vegetarian': 'vegetarian', 'veg': 'vegetarian', 'vegan': 'vegetarian',
+    'non-vegetarian': 'non-vegetarian', 'non vegetarian': 'non-vegetarian',
+    'nonveg': 'non-vegetarian', 'non-veg': 'non-vegetarian', 'nonvegetarian': 'non-vegetarian',
+}
+
+PREFERRED_MEAL_TYPES = ['Breakfast', 'Mid-Morning', 'Lunch', 'Afternoon Snack', 'Dinner', 'Before Bed']
+
+
+def normalize_goal(value):
+    return GOAL_ALIASES.get((value or '').strip().lower(), 'maintenance')
+
+
+def normalize_diet_category(value):
+    return DIET_CATEGORY_ALIASES.get((value or '').strip().lower(), 'non-vegetarian')
+
+
 def load_diet_data():
     """Load diet data with error handling"""
     try:
-        if not os.path.exists('diet_data.csv'):
+        if not os.path.exists(DIET_CSV):
             logger.error("diet_data.csv file not found")
             return pd.DataFrame()
-        
-        df = pd.read_csv('diet_data.csv')
-        required_columns = ['diet_type', 'meal_type', 'food_item', 'calories']
+
+        df = pd.read_csv(DIET_CSV)
+        required_columns = ['food_item', 'meal_type', 'calories', 'goal', 'diet_category']
         missing_columns = set(required_columns) - set(df.columns)
-        
+
         if missing_columns:
             logger.error(f"Missing columns in diet_data.csv: {missing_columns}")
             return pd.DataFrame()
-        
-        df['meal_type'] = df['meal_type'].str.strip()
-        df['diet_type'] = df['diet_type'].str.strip()
-        
+
+        for col in ['meal_type', 'goal', 'diet_category', 'food_item']:
+            df[col] = df[col].astype(str).str.strip()
+
+        # Normalize to canonical lowercase values so filtering is reliable.
+        df['goal'] = df['goal'].str.lower()
+        df['diet_category'] = df['diet_category'].str.lower()
+
         return df
-    
+
     except Exception as e:
         logger.error(f"Error loading diet_data.csv: {e}")
         return pd.DataFrame()
@@ -165,95 +274,88 @@ class WeeklyDietPlan:
         self.height = height
         self.weight = weight
         self.goal = goal
+        self.goal_key = normalize_goal(goal)
         self.duration = duration
         self.diet_type = diet_type
+        self.diet_category = normalize_diet_category(diet_type)
         self.gender = gender
         self.activity_level = activity_level
         self.health_conditions = health_conditions or []
         self.bmr = self.calculate_bmr()
         self.daily_calories = self.adjust_calories()
         self.diet_data = load_diet_data()
-        
+
         if self.diet_data.empty:
             raise ValueError("Diet data could not be loaded. Please check diet_data.csv file.")
-        
+
+        # A non-vegetarian eats everything; a vegetarian only eats vegetarian food.
+        if self.diet_category == 'vegetarian':
+            self.food_pool = self.diet_data[self.diet_data['diet_category'] == 'vegetarian']
+        else:
+            self.food_pool = self.diet_data
+
         self.plan = self.create_diet_plan()
-    
+
     def calculate_bmr(self):
         if self.gender == 'male':
             return 10 * self.weight + 6.25 * self.height - 5 * self.age + 5
         else:
             return 10 * self.weight + 6.25 * self.height - 5 * self.age - 161
-    
+
     def adjust_calories(self):
-        if self.goal == 'weight gain':
+        if self.goal_key == 'weight_gain':
             return self.bmr + 500
-        elif self.goal == 'weight loss':
+        elif self.goal_key == 'weight_loss':
             return self.bmr - 500
         else:
             return self.bmr
-    
+
     def create_diet_plan(self):
-        adjusted_diet_type = self.adjust_diet_for_health_conditions()
-        
-        if self.diet_type == 'weight gain':
-            return {f'Day {i+1}': self.get_meal_plan(i+1, 'weight_gain', adjusted_diet_type) for i in range(7)}
-        elif self.diet_type == 'weight loss':
-            return {f'Day {i+1}': self.get_meal_plan(i+1, 'weight_loss', adjusted_diet_type) for i in range(7)}
-        else:
-            return {f'Day {i+1}': self.get_meal_plan(i+1, 'maintenance', adjusted_diet_type) for i in range(7)}
-    
-    def adjust_diet_for_health_conditions(self):
-        """Adjust diet recommendations based on health conditions"""
-        if not self.health_conditions:
-            return self.diet_type
-        
-        if 'Diabetes' in self.health_conditions:
-            return 'diabetic_friendly'
-        elif 'High Blood Pressure' in self.health_conditions:
-            return 'low_sodium'
-        elif 'Heart Disease' in self.health_conditions:
-            return 'heart_healthy'
-        elif 'High Cholesterol' in self.health_conditions:
-            return 'low_cholesterol'
-        else:
-            return self.diet_type
-    
-    def get_meal_plan(self, day, diet_type, adjusted_diet_type):
-        meals = self.diet_data[self.diet_data['diet_type'] == diet_type]
-        
+        return {f'Day {i + 1}': self.get_meal_plan() for i in range(7)}
+
+    def _meals_for_goal(self):
+        """Meals matching the user's goal, falling back gracefully."""
+        meals = self.food_pool[self.food_pool['goal'] == self.goal_key]
         if meals.empty:
-            logger.warning(f"No meals found for diet type: {diet_type}")
-            if adjusted_diet_type != diet_type:
-                meals = self.diet_data[self.diet_data['diet_type'] == self.diet_type]
-            
-            if meals.empty:
-                meals = self.diet_data
-            
-            if meals.empty:
-                return self.get_default_meal_plan()
-        
-        meal_plan = {}
-        available_meal_types = meals['meal_type'].unique()
-        preferred_meal_types = ['Breakfast', 'Mid-Morning', 'Lunch', 'Afternoon Snack', 'Dinner', 'Before Bed']
-        meal_types_to_use = [mt for mt in preferred_meal_types if mt in available_meal_types]
-        
+            logger.warning(f"No meals for goal '{self.goal_key}', falling back to maintenance")
+            meals = self.food_pool[self.food_pool['goal'] == 'maintenance']
+        if meals.empty:
+            meals = self.food_pool
+        return meals
+
+    def get_meal_plan(self):
+        meals = self._meals_for_goal()
+
+        if meals.empty:
+            return self.get_default_meal_plan()
+
+        available_meal_types = set(meals['meal_type'].unique())
+        meal_types_to_use = [mt for mt in PREFERRED_MEAL_TYPES if mt in available_meal_types]
         if not meal_types_to_use:
             meal_types_to_use = list(available_meal_types)[:6]
-        
+
+        meal_plan = {}
+        total_calories = 0
         for meal_type in meal_types_to_use:
             meal_options = meals[meals['meal_type'] == meal_type]
             if not meal_options.empty:
                 selected_meal = meal_options.sample(1).iloc[0]
-                meal_plan[meal_type] = f"{selected_meal['food_item']} - {selected_meal['calories']} calories"
-            else:
-                meal_plan[meal_type] = f"Default {meal_type.lower()} - Contact nutritionist for specific recommendations"
-        
-        if adjusted_diet_type != diet_type:
-            meal_plan['Health Notes'] = self.get_health_specific_notes(adjusted_diet_type)
-        
+                calories = int(round(float(selected_meal['calories'])))
+                total_calories += calories
+                meal_plan[meal_type] = f"{selected_meal['food_item']} - {calories} calories"
+
+        if total_calories:
+            meal_plan['Daily Total'] = (
+                f"~{total_calories} calories "
+                f"(target ~{int(round(self.daily_calories))} kcal/day)"
+            )
+
+        health_note = self.get_health_specific_notes()
+        if health_note:
+            meal_plan['Health Notes'] = health_note
+
         return meal_plan
-    
+
     def get_default_meal_plan(self):
         """Return a default meal plan when no data is available"""
         return {
@@ -265,17 +367,17 @@ class WeeklyDietPlan:
             'Before Bed': 'Herbal tea - 0 calories',
             'Health Notes': 'Default plan - Please consult a nutritionist for personalized recommendations'
         }
-    
-    def get_health_specific_notes(self, adjusted_diet_type):
-        """Get specific dietary notes based on health conditions"""
+
+    def get_health_specific_notes(self):
+        """Get specific dietary notes based on the user's health conditions."""
         notes = {
-            'diabetic_friendly': 'Focus on low glycemic index foods, monitor carbohydrate intake',
-            'low_sodium': 'Limit salt intake, avoid processed foods, use herbs for flavoring',
-            'heart_healthy': 'Emphasize omega-3 fatty acids, limit saturated fats',
-            'low_cholesterol': 'Reduce animal fats, increase fiber intake, focus on plant-based proteins'
+            'Diabetes': 'Focus on low glycemic index foods and monitor carbohydrate intake.',
+            'High Blood Pressure': 'Limit salt, avoid processed foods, and season with herbs instead.',
+            'Heart Disease': 'Emphasize omega-3 fatty acids and limit saturated fats.',
+            'High Cholesterol': 'Reduce animal fats, increase fiber, and favor plant-based proteins.',
         }
-        
-        return notes.get(adjusted_diet_type, '')
+        messages = [notes[c] for c in self.health_conditions if c in notes]
+        return ' '.join(messages)
 
 # --- File Upload and Health Condition Detection ---
 
@@ -317,9 +419,13 @@ def home_alt():
     return render_template("Home.html")
 
 @app.route('/gen', methods=['GET', 'POST'])
+@app.route('/generate', methods=['GET', 'POST'])
 def generate():
     """Generate a workout routine based on user input."""
     if request.method == 'POST':
+        if not current_user.is_authenticated:
+            flash("Please log in to generate a personalized workout routine.", "error")
+            return redirect(url_for('login', next=url_for('generate')))
         try:
             weight = float(request.form['weight'])
             height = float(request.form['height'])
@@ -344,14 +450,17 @@ def generate():
 
 @app.route("/diet")
 def diet():
-    """Redirect to home page."""
-    return render_template("Home.html")
+    """Render the diet plan page."""
+    return render_template("diet.html")
 
 @app.route("/diet-plan", methods=["GET", "POST"])
 def diet_plan():
     """Handle diet plan generation."""
     diet_plan = None
     if request.method == "POST":
+        if not current_user.is_authenticated:
+            flash("Please log in to generate a personalized meal plan.", "error")
+            return redirect(url_for('login', next=url_for('diet_plan')))
         try:
             age = int(request.form["age"])
             height = float(request.form["height"])
@@ -434,18 +543,102 @@ def coaches():
     """Render the Coaches page."""
     return render_template('coaches.html')
 
+# --- Authentication routes ---
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """Create a new user account."""
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+        age = request.form.get('age', '').strip()
+        gender = request.form.get('gender', '').strip()
+        goal = request.form.get('goal', '').strip()
+
+        # Server-side validation
+        if len(name) < 2:
+            flash("Please enter your name (at least 2 characters).", "error")
+        elif '@' not in email or '.' not in email:
+            flash("Please enter a valid email address.", "error")
+        elif len(password) < 6:
+            flash("Password must be at least 6 characters.", "error")
+        elif User.query.filter_by(email=email).first():
+            flash("An account with that email already exists. Please log in.", "error")
+        else:
+            try:
+                user = User(
+                    name=name,
+                    email=email,
+                    age=int(age) if age.isdigit() else None,
+                    gender=gender or None,
+                    goal=goal or None,
+                )
+                user.set_password(password)
+                db.session.add(user)
+                db.session.commit()
+                login_user(user)
+                flash(f"Welcome, {user.name}! Your account has been created.", "success")
+                return redirect(url_for('home'))
+            except Exception as e:
+                db.session.rollback()
+                logger.error(f"Registration failed: {e}")
+                flash("Could not create your account right now. Please try again later.", "error")
+
+    return render_template('registration.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Log an existing user in."""
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+
+        user = User.query.filter_by(email=email).first()
+        if user and user.check_password(password):
+            login_user(user)
+            flash(f"Welcome back, {user.name}!", "success")
+            next_page = request.args.get('next')
+            # Only allow relative redirects to avoid open-redirect attacks.
+            if next_page and next_page.startswith('/'):
+                return redirect(next_page)
+            return redirect(url_for('home'))
+
+        flash("Invalid email or password.", "error")
+
+    return render_template('login.html')
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    """Log the current user out."""
+    logout_user()
+    flash("You have been logged out.", "success")
+    return redirect(url_for('home'))
+
+
 @app.route('/ai-coach')
+@login_required
 def ai_coach():
     """Display the AI fitness coach chatbot interface."""
     return render_template('chatbot.html')
 
 @app.route('/api/chat', methods=['POST'])
+@login_required
 def chat_api():
     """API endpoint for chatbot conversations."""
     try:
-        data = request.json
+        data = request.json or {}
         message = data.get('message', '').strip()
-        
+
         if not message:
             return jsonify({'error': 'Message is required'}), 400
         
