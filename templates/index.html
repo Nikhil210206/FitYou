@@ -11,6 +11,7 @@
     </div>
 
     <form class="form-card" action="{{ url_for('generate') }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       <div class="form-grid">
         <div class="form-group">
           <label for="weight">Weight (kg)</label>

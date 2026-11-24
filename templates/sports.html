@@ -84,7 +84,7 @@
     try {
       const res = await fetch('/sport', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name=csrf-token]').content },
         body: JSON.stringify({ fitness_level: level })
       });
       const data = await res.json();

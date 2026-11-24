@@ -2,10 +2,14 @@ from flask import (
     Flask, render_template, request, jsonify, flash, redirect, url_for
 )
 import random
+import secrets
 import pandas as pd
 import os
 import json
 import logging
+from urllib.parse import urlparse
+
+from flask_wtf.csrf import CSRFProtect, CSRFError
 
 # STEP 1: ADDED NEW IMPORTS
 import google.generativeai as genai
@@ -29,11 +33,71 @@ EXERCISES_CSV = os.path.join(BASE_DIR, 'exercises.csv')
 DIET_CSV = os.path.join(BASE_DIR, 'diet_data.csv')
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'fallback-secret-key-change-in-production')
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# --- Security configuration ---------------------------------------------------
+# Environment variables set by the hosting platforms we deploy to. If any is
+# present we treat the process as production.
+_PRODUCTION_MARKERS = ('VERCEL', 'RENDER', 'RAILWAY_ENVIRONMENT', 'FLY_APP_NAME')
+IS_PRODUCTION = (
+    os.getenv('FLASK_ENV', '').lower() == 'production'
+    or any(os.getenv(marker) for marker in _PRODUCTION_MARKERS)
+)
+
+_secret_key = os.getenv('SECRET_KEY', '').strip()
+if not _secret_key:
+    if IS_PRODUCTION:
+        # Never run in production with a guessable key: anyone could forge
+        # session cookies and log in as any user.
+        raise RuntimeError(
+            "SECRET_KEY is not set. Configure a long random SECRET_KEY "
+            "environment variable before starting FitYou in production."
+        )
+    _secret_key = secrets.token_hex(32)
+    logger.warning(
+        "SECRET_KEY is not set; using a temporary random key. Sessions will "
+        "reset whenever the server restarts. Set SECRET_KEY in your .env file."
+    )
+app.secret_key = _secret_key
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE=IS_PRODUCTION,
+    REMEMBER_COOKIE_HTTPONLY=True,
+    REMEMBER_COOKIE_SAMESITE='Lax',
+    REMEMBER_COOKIE_SECURE=IS_PRODUCTION,
+    MAX_CONTENT_LENGTH=1 * 1024 * 1024,  # reject request bodies over 1 MB
+)
+
+# CSRF protection for every POST form and JSON endpoint. Templates send the
+# token as a hidden `csrf_token` field or an `X-CSRFToken` header.
+csrf = CSRFProtect(app)
+
+MIN_PASSWORD_LENGTH = 8
+
+
+@app.after_request
+def set_security_headers(response):
+    response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    response.headers.setdefault('X-Frame-Options', 'DENY')
+    response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
+    if IS_PRODUCTION:
+        response.headers.setdefault(
+            'Strict-Transport-Security', 'max-age=31536000; includeSubDomains'
+        )
+    return response
+
+
+def is_safe_redirect(target):
+    """Only allow redirects to a path on this site (blocks //evil.com etc.)."""
+    if not target or not target.startswith('/') or target.startswith('//') or '\\' in target:
+        return False
+    parsed = urlparse(target)
+    return not parsed.scheme and not parsed.netloc
 
 # --- Database configuration ---------------------------------------------------
 # Use DATABASE_URL when provided (e.g. Postgres in production). Fall back to a
@@ -526,33 +590,6 @@ class WeeklyDietPlan:
         messages = [notes[c] for c in self.health_conditions if c in notes]
         return ' '.join(messages)
 
-# --- File Upload and Health Condition Detection ---
-
-def detect_health_conditions_from_text(text):
-    """Detect health conditions from text content"""
-    if not text:
-        return []
-    
-    text_lower = text.lower()
-    detected_conditions = []
-    
-    conditions = {
-        "diabetes": "Diabetes", "diabetic": "Diabetes", "blood sugar": "Diabetes", "glucose": "Diabetes",
-        "high blood pressure": "High Blood Pressure", "hypertension": "High Blood Pressure", "bp": "High Blood Pressure",
-        "heart disease": "Heart Disease", "cardiac": "Heart Disease", "coronary": "Heart Disease",
-        "asthma": "Asthma", "respiratory": "Respiratory Issues", "cancer": "Cancer", "tumor": "Cancer",
-        "malignant": "Cancer", "kidney disease": "Kidney Disease", "renal": "Kidney Disease",
-        "lung disease": "Lung Disease", "pulmonary": "Lung Disease", "arthritis": "Arthritis",
-        "thyroid": "Thyroid Disorder", "cholesterol": "High Cholesterol", "migraine": "Migraine",
-        "depression": "Depression", "anxiety": "Anxiety"
-    }
-    
-    for keyword, condition in conditions.items():
-        if keyword in text_lower and condition not in detected_conditions:
-            detected_conditions.append(condition)
-    
-    return detected_conditions
-
 # --- Flask Routes ---
 
 @app.route("/")
@@ -623,7 +660,7 @@ def diet_plan():
             diet_plan = user.plan
             
         except ValueError as e:
-            flash(f"Invalid input: {str(e)}", "error")
+            flash("Please check your details: some values are missing or invalid.", "error")
             logger.error(f"Diet plan generation failed: {e}")
         except Exception as e:
             flash("An error occurred while generating your meal plan. Please try again.", "error")
@@ -709,8 +746,8 @@ def register():
             flash("Please enter your name (at least 2 characters).", "error")
         elif '@' not in email or '.' not in email:
             flash("Please enter a valid email address.", "error")
-        elif len(password) < 6:
-            flash("Password must be at least 6 characters.", "error")
+        elif len(password) < MIN_PASSWORD_LENGTH:
+            flash(f"Password must be at least {MIN_PASSWORD_LENGTH} characters.", "error")
         elif User.query.filter_by(email=email).first():
             flash("An account with that email already exists. Please log in.", "error")
         else:
@@ -751,8 +788,8 @@ def login():
             login_user(user)
             flash(f"Welcome back, {user.name}!", "success")
             next_page = request.args.get('next')
-            # Only allow relative redirects to avoid open-redirect attacks.
-            if next_page and next_page.startswith('/'):
+            # Only allow same-site redirects to avoid open-redirect attacks.
+            if is_safe_redirect(next_page):
                 return redirect(next_page)
             return redirect(url_for('home'))
 
@@ -796,51 +833,9 @@ def chat_api():
     except Exception as e:
         logger.error(f"Server error in chat API: {str(e)}")
         return jsonify({
-            'error': f'Server error: {str(e)}',
+            'error': 'Something went wrong. Please try again.',
             'status': 'error'
         }), 500
-
-@app.route('/upload_medical_certificate', methods=['POST'])
-def upload_medical_certificate():
-    """Handle medical certificate upload and extract health conditions."""
-    try:
-        if 'medical_certificate' not in request.files:
-            return jsonify({'success': False, 'error': 'No file uploaded'}), 400
-        
-        file = request.files['medical_certificate']
-        if file.filename == '':
-            return jsonify({'success': False, 'error': 'No file selected'}), 400
-        
-        allowed_extensions = {'txt', 'pdf', 'docx'}
-        file_extension = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
-        
-        if file_extension not in allowed_extensions:
-            return jsonify({'success': False, 'error': 'File type not supported. Please upload PDF, DOCX, or TXT files.'}), 400
-        
-        text_content = ""
-        if file_extension == 'txt':
-            try:
-                text_content = file.read().decode('utf-8')
-            except UnicodeDecodeError:
-                text_content = file.read().decode('latin-1')
-        else:
-            # Inform user that we don't process complex file types directly
-            return jsonify({
-                'success': False,
-                'error': f'Processing {file_extension.upper()} files requires specific libraries. Please copy-paste the text content or convert to TXT format.'
-            }), 400
-        
-        health_conditions = detect_health_conditions_from_text(text_content)
-        conditions_text = ', '.join(health_conditions) if health_conditions else 'None'
-        
-        return jsonify({
-            'success': True,
-            'health_conditions': health_conditions,
-            'conditions_text': conditions_text
-        })
-    except Exception as e:
-        logger.error(f"Error processing file: {e}")
-        return jsonify({'success': False, 'error': f'Error processing file: {str(e)}'}), 500
 
 # Additional routes for legal pages
 @app.route('/privacy')
@@ -859,6 +854,15 @@ def about():
     return render_template('about.html')
 
 # Error handlers
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    """Expired or missing CSRF token: ask the user to retry instead of a 500."""
+    if request.is_json or request.path.startswith('/api/') or request.path == '/sport':
+        return jsonify({'status': 'error', 'error': 'Your session expired. Please refresh the page and try again.'}), 400
+    flash("Your session expired. Please try again.", "error")
+    # Every form route also renders its page on GET, so send the user back there.
+    return redirect(request.full_path.rstrip('?'))
+
 @app.errorhandler(404)
 def page_not_found(e):
     """Render a custom 404 error page."""

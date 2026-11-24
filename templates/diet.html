@@ -26,6 +26,7 @@
     </div>
 
     <form class="form-card" id="dietForm" action="{{ url_for('diet_plan') }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       <div class="form-grid">
         <div class="form-group">
           <label for="age">Age</label>

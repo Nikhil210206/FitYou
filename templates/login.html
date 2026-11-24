@@ -8,6 +8,7 @@
     <p class="sub">Log in to access your AI coach and personalized plans.</p>
 
     <form action="{{ url_for('login', next=request.args.get('next')) }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" name="email" placeholder="you@example.com" required />
