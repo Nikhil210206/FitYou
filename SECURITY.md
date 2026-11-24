@@ -1,25 +1,35 @@
-Security Policy
-Supported Versions
-The following versions of FitYou are currently supported with security updates:
+# Security Policy
 
-Version	Supported
-1.x.x	✅ Supported
-0.x.x	❌ Not supported
-Reporting a Vulnerability
-If you discover a security vulnerability in FitYou, we encourage you to report it as soon as possible. We will investigate all legitimate reports and do our best to quickly fix the issue.
+## Supported versions
 
-How to Report
-Please report vulnerabilities by emailing us at FitYou@gmail.com. Include as much detail as possible to help us identify and fix the issue swiftly.
-Do not share the vulnerability publicly until it has been addressed and a patch is available.
-Security Updates
-We will notify users via GitHub releases for any critical security updates.
-Minor security patches will be included in regular updates as needed.
+Only the latest code on the `main` branch (and the live deployment built from it) receives security fixes.
 
-Security Best Practices
-Make sure to use the latest version of FitYou for the latest security features and patches.
-Follow password best practices, such as using strong, unique passwords for each account.
-Regularly update your dependencies to the latest versions.
+## Reporting a vulnerability
 
-Acknowledgements
-We appreciate contributions from the community and researchers who help us improve the security of FitYou. Thank you for keeping the platform secure for everyone!
+**Please do not open a public issue for security problems.**
 
+Report vulnerabilities privately through GitHub:
+[**Report a vulnerability**](https://github.com/Nikhil210206/FitYou/security/advisories/new)
+
+Include as much detail as you can:
+
+- what the issue is and where it lives (file, route or page)
+- steps to reproduce, or a proof of concept
+- the impact you think it has
+
+You can expect an acknowledgement within 7 days. Once a fix ships, we will credit you in the advisory unless you prefer to stay anonymous.
+
+## Security measures in FitYou
+
+- Passwords are hashed with Werkzeug (never stored in plain text).
+- All forms and JSON endpoints are protected against CSRF (Flask-WTF).
+- Session cookies are `HttpOnly`, `SameSite=Lax`, and `Secure` in production.
+- The app refuses to start in production without a `SECRET_KEY`.
+- Login redirects only go to paths on this site (no open redirects).
+- Secrets such as `GEMINI_API_KEY` are read from environment variables and never committed.
+
+## For self-hosters
+
+- Generate a strong `SECRET_KEY`: `python -c "import secrets; print(secrets.token_hex(32))"`
+- Use a hosted Postgres database with TLS for `DATABASE_URL` in production.
+- Keep dependencies up to date (`pip install -U -r requirements.txt`).

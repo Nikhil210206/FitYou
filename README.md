@@ -1,361 +1,251 @@
-[![OSCI-Project-Banner.png](https://i.postimg.cc/76mJvBmF/OSCI-Project-Banner.png)](https://postimg.cc/8JfzMb84)
+<div align="center">
 
-<p align="center">
-  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React.js">
-  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Flask">
-  <img src="https://img.shields.io/badge/Scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white" alt="Scikit-learn">
-  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
-  <img src="https://img.shields.io/badge/Google%20Generative%20AI-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Generative AI">
-</p>
+<img src="static/images/fitai.jpg" alt="FitYou logo" width="120" />
 
-# FitYiu: Your AI Fitness Companion 🌟
+# FitYou
 
-FitYou redefines fitness with **AI-driven personalized plans** for workouts and diets. Empowering your fitness journey with cutting-edge technology and expert guidance, FitYou adapts to your unique goals and lifestyle.
+**An open-source, AI-powered fitness companion.**
+Personalized workouts, Indian-cuisine meal plans, and a Gemini-powered coach, all in one Flask app.
 
-**🌐 Live Deployment:** [Check it out here 👀](https://fityou-fit-ai.onrender.com/)
+[![Live Demo](https://img.shields.io/badge/demo-live-FF6B35?style=flat-square)](https://fit-you-six.vercel.app/)
+[![Python](https://img.shields.io/badge/python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](runtime.txt)
+[![Flask](https://img.shields.io/badge/flask-3.1-000000?style=flat-square&logo=flask&logoColor=white)](requirements.txt)
+[![Gemini](https://img.shields.io/badge/Google%20Gemini-2.5%20Flash-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
+[![GitHub stars](https://img.shields.io/github/stars/Nikhil210206/FitYou?style=flat-square)](https://github.com/Nikhil210206/FitYou/stargazers)
 
-**Points for issues on leaderboard:** 
-1 star - 5 points |
-2 star - 10 points |
-3 star - 15 points
+[**Live Demo**](https://fit-you-six.vercel.app/) · [**Report a Bug**](https://github.com/Nikhil210206/FitYou/issues/new?template=bug_report.yml) · [**Request a Feature**](https://github.com/Nikhil210206/FitYou/issues/new?template=feature_request.yml)
 
-## 📑 Table of Contents
+<br />
 
-- [🌟 Key Features](#-key-features)
-- [💻 Technologies at Work](#-technologies-at-work)
-- [🎯 Highlights](#-highlights)
-- [📂 Project Structure](#-project-structure)
-- [⚙️ How to Install](#️-how-to-install)
-- [🛠️ Usage](#️-usage)
-- [🚀 Future Enhancements](#-future-enhancements)
-- [🤝 Contributions Welcome](#-contributions-welcome)
-- [📞 Contact](#-contact)
-- [🙏 Acknowledgments](#-acknowledgments)
-- [📜 License](#-license)
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="docs/screenshots/home-light.png" />
+  <img src="docs/screenshots/home.png" alt="FitYou home page" width="100%" />
+</picture>
 
+</div>
 
-## 🌟 Key Features
+---
 
-- 🏋️ **Personalized Workout Plans**
-  Tailored routines based on your preferences, fitness goals, and available equipment, ensuring an effective and safe workout experience.
+## Table of Contents
 
-- 🥗 **Customized Diet Plans**
-  Balanced meal recommendations with a special focus on Indian cuisine, offering 60% vegetarian and 40% non-vegetarian options.
+- [About](#about)
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Tech Stack](#tech-stack)
+- [How It Works](#how-it-works)
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [Project Structure](#project-structure)
+- [Deployment](#deployment)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
 
-- 🤖 **AI-Powered Insights**
-  Smart algorithms deliver highly personalized fitness and diet suggestions, continuously learning and adapting to your progress.
+## About
 
-- 🎨 **Dark-Themed, User-Friendly Interface**
-  An intuitive and aesthetically pleasing dark-themed design provides a smooth and engaging user experience.
+Most fitness apps are paywalled, generic, or built around Western diets. FitYou is a free, open-source alternative that:
 
-- 🛠️ **Professional Guidance**
-  Access to experienced coaches and mentors for expert support and advice throughout your fitness journey.
+- builds **workout routines** from your body metrics and fitness level,
+- creates **multi-day meal plans** from a curated dataset of Indian dishes, sized to your calorie target, and
+- answers fitness and nutrition questions through an **AI coach** backed by Google Gemini.
 
+It is a single, lightweight Flask app with no frontend build step, so it is easy to run locally, read, and contribute to.
 
+## Features
 
-## 💻 Technologies at Work
+| | Feature | What it does |
+|---|---|---|
+| 🏋️ | **Workout Generator** | Calculates your BMI from height and weight, maps it to a training intensity, and builds a warm-up → workout → cool-down routine from 180+ exercises. |
+| 🥗 | **Diet Planner** | Estimates your BMR (Mifflin-St Jeor) and TDEE from age, gender and activity level, adjusts for your goal (lose / maintain / gain), and generates a 1–30 day vegetarian or non-vegetarian plan with six meals a day. |
+| 🩺 | **Health-aware meals** | Adds dietary guidance when you select diabetes, high blood pressure, heart disease or high cholesterol. |
+| 🏃 | **Sports Routines** | Beginner, intermediate and advanced routines split into strength, cardio and flexibility blocks, with sets and reps that scale by level. |
+| 🤖 | **FitAI Coach** | A chat assistant powered by Gemini 2.5 Flash, scoped to fitness, nutrition and recovery, with voice input and automatic model fallback. |
+| 📅 | **7-Day Plan & Yoga** | A guided weekly workout plan with day-by-day pages, plus a yoga section. |
+| 🧑‍🏫 | **Coaches Directory** | Browse trainers by specialty and city. |
+| 🔐 | **Accounts** | Sign up and log in with hashed passwords, CSRF-protected forms and secure session cookies. Plan generation and the AI coach need an account. |
+| 🌗 | **Light & dark themes** | Responsive design with a theme toggle that is remembered across visits. |
 
-- **Frontend:** **React.js** for building a dynamic, responsive, and modern user interface.
-- **Backend:** **Flask** for robust API management and seamless integration of AI models.
-- **Machine Learning:** **Scikit-learn** powers the predictive modeling for personalized recommendations.
-- **Database:** **MongoDB** for flexible and scalable storage of user profiles, fitness data, and personalized plans.
-- **AI API:** **Google Generative AI** for advanced language understanding and enhanced interactive features.
+## Screenshots
 
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/workout-generator.png" alt="Workout generator" /><br /><sub><b>Workout Generator:</b> BMI-based warm-up, workout and cool-down</sub></td>
+    <td width="50%"><img src="docs/screenshots/diet-plan.png" alt="Diet plan" /><br /><sub><b>Diet Planner:</b> multi-day Indian meal plans with calorie targets</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/sports.png" alt="Sports routine" /><br /><sub><b>Sports Routines:</b> strength, cardio and flexibility by level</sub></td>
+    <td width="50%"><img src="docs/screenshots/ai-coach.png" alt="AI coach" /><br /><sub><b>FitAI Coach:</b> Gemini-powered fitness chat</sub></td>
+  </tr>
+</table>
 
-## 🎯 Highlights
+<div align="center">
+  <img src="docs/screenshots/mobile-home.png" alt="FitYou on mobile" width="280" />
+  <br /><sub>Fully responsive on mobile</sub>
+</div>
 
-- **Stylish Dark Theme:** An elegant UI featuring subtle orange accents and modern typography for a premium feel.
-- **Indian Cuisine Focus:** Thoughtfully curated meal plans that align with diverse cultural and dietary preferences specific to India.
-- **AI-Driven Accuracy:** Leveraging data-powered intelligence to provide precise and effective personalized fitness recommendations.
-- **Scalability:** Architected for growth, the platform is designed to efficiently accommodate an expanding user base and new features.
+## Tech Stack
 
+| Layer | Technology |
+|---|---|
+| Backend | [Flask 3](https://flask.palletsprojects.com/), [Gunicorn](https://gunicorn.org/) |
+| Frontend | Jinja2 templates, vanilla CSS design system, vanilla JavaScript |
+| AI | [Google Gemini](https://ai.google.dev/) via `google-generativeai` (`gemini-2.5-flash` by default) |
+| Data | [pandas](https://pandas.pydata.org/) over CSV datasets (`exercises.csv`, `diet_data.csv`) |
+| Auth & DB | Flask-Login, Flask-WTF (CSRF), Flask-SQLAlchemy, SQLite (local) / PostgreSQL (production) |
+| Hosting | [Vercel](https://vercel.com/) or [Render](https://render.com/) |
 
-## 📂 Project Structure
+## How It Works
 
-The FitAi project follows a consolidated structure where both frontend (React) and backend (Flask) components reside primarily in the root directory, with dedicated folders for static assets, templates, and configurations.
+```mermaid
+flowchart LR
+    U([User]) --> F[Flask app<br/>app.py]
+    F -->|BMI → intensity| W[Workout Generator]
+    F -->|BMR × activity ± goal| D[Diet Planner]
+    F -->|level| S[Sports Routines]
+    F -->|prompt| G[Gemini API]
+    W --> E[(exercises.csv)]
+    S --> E
+    D --> M[(diet_data.csv)]
+    F --> DB[(SQLite / Postgres<br/>users)]
+```
 
+- **Workouts:** BMI under 18.5 → intensity 50, 18.5–24.9 → 70, 25–29.9 → 60, 30+ → 40. Intensity sets how many exercises are drawn from each phase (20% warm-up, 60% workout, 20% cool-down).
+- **Diet:** `BMR = 10·weight + 6.25·height − 5·age (+5 male / −161 female)`, multiplied by an activity factor (1.2–1.9) to get TDEE, then ±500 kcal for weight gain or loss.
+- **AI Coach:** every message is wrapped in a fitness-only system prompt. If the configured Gemini model fails or is retired, the app falls back through a list of current models.
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.12+
+- A free [Google Gemini API key](https://aistudio.google.com/app/apikey) (only needed for the AI coach)
+
+### Installation
+
+```bash
+git clone https://github.com/Nikhil210206/FitYou.git
+cd FitYou
+```
+
+```bash
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+```
+
+```bash
+pip install -r requirements.txt
+```
+
+```bash
+cp env_template.txt .env
+```
+
+Open `.env` and set `GEMINI_API_KEY` and `SECRET_KEY` (see [Configuration](#configuration)). Then start the app:
+
+```bash
+flask --app app run --debug
+```
+
+Open **http://localhost:5000**. A local SQLite database (`fityou.db`) is created automatically on first run.
+
+## Configuration
+
+All settings are read from environment variables (or a `.env` file).
+
+| Variable | Required | Description |
+|---|---|---|
+| `GEMINI_API_KEY` | For the AI coach | Your Google Gemini API key. |
+| `SECRET_KEY` | Yes | Long random string used to sign sessions. The app refuses to start in production without it; locally it falls back to a temporary random key. Generate one with `python -c "import secrets; print(secrets.token_hex(32))"`. |
+| `DATABASE_URL` | In production | PostgreSQL connection string. Defaults to a local SQLite file when unset. |
+| `GEMINI_MODEL` | No | Override the default model (`gemini-2.5-flash`). Retired models are ignored automatically. |
+
+## Project Structure
 
 ```
-📂 FitAi/  
-├── .DS_Store                      # macOS folder metadata (can be ignored)  
-├── .gitignore                     # Specifies untracked files to ignore  
-├── .hintrc                        # Configuration for code linting/formatting  
-├── .vercelignore                  # Files to ignore during Vercel deployment  
-├── app.py                         # Main Flask application entry point  
-├── DEPLOYMENT.md                  # Deployment instructions & guidelines  
-├── diet_data.csv                  # Dataset containing diet-related data  
-├── env_template.txt               # Template for environment variable setup  
-├── exercises.csv                  # Dataset containing exercise-related data  
-├── fitai.jpg                      # Project branding/logo image  
-├── LICENSE                        # License file  
-├── package-lock.json              # Exact versions of npm dependencies  
-├── package.json                   # Frontend project metadata & npm scripts  
-├── postcss.config.js              # PostCSS (CSS processor) configuration  
-├── README.md                      # Main project documentation  
-├── render.yaml                    # Deployment configuration for Render  
-├── requirements.txt               # Python dependencies for Flask backend  
-├── runtime.txt                    # Python runtime version specification  
-├── SECURITY.md                    # Security policy for contributors/users  
-├── tailwind.config.js             # Tailwind CSS configuration file  
-└── vercel.json                    # Vercel deployment configuration  
+FitYou/
+├── app.py                 # Flask app: routes, auth, workout/diet/sports logic, Gemini client
+├── exercises.csv          # Exercise library (warm-up, workout, cool-down; rep and duration ranges)
+├── diet_data.csv          # Indian meal dataset (calories, macros, goal, veg/non-veg)
+├── requirements.txt       # Python dependencies
+├── env_template.txt       # Example environment variables
+├── vercel.json            # Vercel config
+├── render.yaml            # Render config
+├── templates/             # Jinja2 pages
+│   ├── base.html          # Shared layout
+│   ├── partials/          # Navbar and footer
+│   ├── Home.html          # Landing page
+│   ├── index.html         # Workout generator
+│   ├── diet.html          # Diet planner
+│   ├── sports.html        # Level-based routines
+│   ├── chatbot.html       # FitAI coach
+│   ├── workout_plan.html  # 7-day plan (+ day1–day7.html)
+│   └── ...                # Yoga, coaches, auth, legal and error pages
+├── static/
+│   ├── css/main.css       # Design system (tokens, components, light/dark themes)
+│   ├── js/theme.js        # Theme toggle and mobile nav
+│   └── images/
+├── docs/screenshots/      # Images used in this README
+└── .github/               # Issue/PR templates and workflows
+```
 
-├── .github/                       # GitHub repo configs  
-│   ├── pull_request_template.md   # Template for PRs  
-│   ├── ISSUE_TEMPLATE/            # Templates for bug reports, feature requests  
-│   │   ├── bug_report.yml  
-│   │   ├── config.yml  
-│   │   └── feature_request.yml  
-│   └── workflows/                 # CI/CD workflows (deploy, automation, etc.)  
-│       ├── deploy.yml  
-│       ├── issue-create-automate-message.yml  
-│       └── pr-create-automate-message.yml  
+## Deployment
 
-├── .idea/                         # IDE configuration files (JetBrains IDEs)  
-│   ├── .gitignore                 # IDE-specific gitignore  
-│   ├── FitYou---Fit_Ai.iml        # IntelliJ project file  
-│   ├── modules.xml                # IDE module settings  
-│   ├── vcs.xml                    # Version control config for IDE  
-│   └── inspectionProfiles/        # IDE inspection profile settings  
-│       └── profiles_settings.xml  
+FitYou deploys as a standard Python web app.
 
-├── static/                        # Static frontend assets  
-│   ├── .DS_Store                  # macOS metadata (can be ignored)  
-│   ├── css/                       # Theme & custom CSS  
-│   │   └── theme.css              # Global theme styles  
-│   ├── images/                    # Static images (logos, backgrounds, etc.)  
-│   │   ├── faviconn.png  
-│   │   ├── fitai.jpg  
-│   │   ├── logo.jpg  
-│   │   ├── med.jpg  
-│   │   ├── nutrition.jpg  
-│   │   ├── workoutplan.jpg  
-│   │   └── yinyoga.jpg  
-│   └── js/                        # JavaScript & React components  
-│       ├── README_WorkoutPlanCard.md # Documentation for WorkoutPlanCard  
-│       ├── theme.js               # Theme switcher logic  
-│       ├── WorkoutPlanCard.jsx    # JSX component for workout plans  
-│       ├── WorkoutPlanCard.tsx    # TypeScript variant of workout plan component  
-│       ├── WorkoutPlanCardDemo.html # Demo HTML for workout plan card  
-│       └── WorkoutPlanCardExample.jsx # Example usage of component  
+- **Vercel:** import the repo; `vercel.json` routes all traffic to `app.py`. Vercel's filesystem is read-only, so set `DATABASE_URL` to a hosted Postgres database (for example [Neon](https://neon.tech)).
+- **Render:** connect the repo; `render.yaml` runs `gunicorn app:app` and generates a `SECRET_KEY` for you.
 
-├── templates/                     # Flask Jinja2 templates (HTML + assets)  
-│   ├── chatbot.html               # Chatbot UI  
-│   ├── coaches.html               # Coaches Marketplace  
-│   ├── day1.html                  # Day 1 plan  
-│   ├── day2.html                  # Day 2 plan  
-│   ├── day3.html                  # Day 3 plan  
-│   ├── day4.html                  # Day 4 plan  
-│   ├── day5.html                  # Day 5 plan  
-│   ├── day6.html                  # Day 6 plan  
-│   ├── day7.html                  # Day 7 plan (Rest Day Importance & Routine)  
-│   ├── diet.html                  # Diet plan page  
-│   ├── diet_data.csv              # Diet data (duplicated for template use)  
-│   ├── Home.html                  # Landing page  
-│   ├── index.html                 # Main index/entry point  
-│   ├── login.html                 # Login page  
-│   ├── page5.html                 # Additional page (generic)  
-│   ├── privacy.html               # Privacy policy page  
-│   ├── registration.html          # User registration page  
-│   ├── Sections.html              # Sections overview  
-│   ├── sports.html                # Sports content page  
-│   ├── terms.html                 # Terms & conditions page  
-│   ├── Untitled-2.css             # CSS (unnamed, cleanup recommended)  
-│   ├── workout_plan.html          # Workout plan overview  
-│   ├── workout_routine.html       # Workout routine details page  
-│   ├── Yoga.html                  # Yoga-related content  
-│   ├── css/                       # CSS scoped for templates  
-│   │   └── style.css  
-│   └── images/                    # Images used in templates  
-│       ├── fitai.jpg  
-│       ├── FY.png  
-│       ├── gym.jpg.png  
-│       └── logo.jpg  
+See [DEPLOYMENT.md](DEPLOYMENT.md) for details.
 
-└── __pycache__/                   # Python compiled bytecode cache  
-    └── app.cpython-313.pyc  
+## Roadmap
 
-    ```
+- [ ] Save generated plans to the user's profile and track progress over time
+- [ ] Wearable integrations (Google Fit, Apple Health) for activity data
+- [ ] Upload medical reports (PDF, DOCX) to detect health conditions automatically
+- [ ] Macro breakdown and charts on diet plans
+- [ ] Multi-language support
+- [ ] Automated test suite and CI checks
 
+Have an idea? [Open a feature request](https://github.com/Nikhil210206/FitYou/issues/new?template=feature_request.yml).
 
-## ⚙️ How to Install
+## Contributing
 
-Follow these steps to set up and run FitAi locally for development:
+Contributions of every size are welcome: bug fixes, new exercises or recipes in the datasets, UI improvements, docs, and tests.
 
-1.  **Fork the repository.**
-    * Click the "Fork" button on the top right of the GitHub repository page to create a copy in your account.
-2.  **Clone your forked repository:**
-    ```
-    git clone https://github.com/Nikhil210206/FitYou---Fit_Ai.git
-    ```
-3.  **Navigate to the project directory:**
-    ```
-    cd FitYou---Fit_Ai
-    ```
-4.  **Install Python dependencies for the backend:**
-    ```
-    pip install -r requirements.txt
-    ```
-5.  **Install frontend dependencies:**
-    ```
-    npm install
-    ```
-6.  **Start the backend server:**
-    ```
-    flask run
-    # Alternatively, if 'flask' command is not globally available:
-    # python app.py
-    ```
-7.  **Start the frontend development server:**
-    ```
-    npm start
-    ```
-    * **Note:** Given the consolidated project structure, the `npm start` command runs the React development server. It serves the frontend assets (like your React components) which are then likely integrated or proxied by the Flask backend.
-    * **Important:** Ensure both the Flask backend (Step 6) and the React development server (Step 7) are running concurrently for the full application functionality.
-8.  **Open in browser:**
-    * Access the application by navigating to: `http://localhost:5000`
-    * **Explanation:** The Flask backend, which serves as the primary web server, typically runs on port `5000` by default. Your React frontend assets are likely served through this same port once the Flask application is running and configured to handle them.
+1. Fork the repo and create a branch: `git checkout -b feat/your-feature`
+2. Make your changes and test them locally
+3. Commit with a clear message: `git commit -m "feat: add macro chart to diet plan"`
+4. Push and open a pull request
 
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow, and check the [open issues](https://github.com/Nikhil210206/FitYou/issues) for places to start. To report a security issue, see [SECURITY.md](SECURITY.md).
 
-## 🛠️ Usage
+### Contributors
 
--   **Sign up or Log in:** Create an account or log in to access your personalized fitness dashboard.
--   **Enter your details:** Provide information about your fitness goals, current activity level, and available equipment.
--   **Receive Plans:** Get instant access to tailored workout routines and customized diet plans.
--   **Track Progress:** Monitor your achievements and adjust your preferences to evolve your plan as needed.
--   **Connect with Experts:** Engage with experienced coaches and mentors for additional guidance and motivation.
+Thanks to everyone who has contributed to FitYou.
 
+<a href="https://github.com/Nikhil210206/FitYou/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Nikhil210206/FitYou" alt="Contributors" />
+</a>
 
+## License
 
-## 🚀 Future Enhancements
+FitYou is released under the [MIT License](LICENSE).
 
--   **Wearable Device Integration:** Seamless connectivity with popular wearable devices for real-time activity tracking and data synchronization.
--   **Multi-Language Support:** Expand accessibility by offering the application in multiple languages.
--   **Gamification Features:** Introduce engaging game-like elements and challenges to enhance user motivation and engagement.
--   **Advanced Analytics Dashboard:** A comprehensive dashboard providing deeper insights into user progress, performance metrics, and health trends.
+> **Disclaimer:** FitYou gives general fitness and nutrition guidance. It is not medical advice. Talk to a qualified professional before starting a new diet or training program, especially if you have a health condition.
 
+## Acknowledgments
 
+- [Google Gemini](https://ai.google.dev/) for the AI coach
+- [Font Awesome](https://fontawesome.com/) for icons and [Unsplash](https://unsplash.com/) for imagery
+- Everyone who contributed during Open Source Connect India 2025
 
-## 🤝 Contributions Welcome
+---
 
-We welcome contributions from the community! To contribute to FitAi, please follow these steps to ensure a smooth and conflict-free process:
+<div align="center">
 
-1.  **Fork the repository.**
-    * Click the "Fork" button on the top right of the [FitAi GitHub repository](https://github.com/Nikhil210206/FitYou---Fit_Ai.git) 
+Built by [Nikhil Balamurugan](https://github.com/Nikhil210206). If FitYou helps you, please consider giving it a ⭐
 
-2.  **Clone your forked repository locally:**
-    ```
-    git clone https://github.com/your-username/FitYou---Fit_Ai.git
-    cd FitAi
-    ```
-    *Replace `your-username` with your actual GitHub username.*
-
-3.  **Add the upstream remote:**
-    * This step links your local repository to the original FitAi repository, allowing you to fetch updates.
-    ```
-    git remote add upstream https://github.com/Nikhil210206/FitYou---Fit_Ai.git
-    ```
-
-4.  **Fetch the latest changes from the upstream `main` branch:**
-    * Before starting any work, always synchronize your local `main` branch with the upstream `main` to get the most recent updates and avoid merge conflicts.
-    ```
-    git fetch upstream
-    ```
-
-5.  **Merge upstream changes into your local `main` branch:**
-    ```
-    git checkout main
-    git merge upstream/main
-    ```
-    * This ensures your local `main` is up-to-date.
-
-6.  **Create a new branch for your feature or bug fix:**
-    * Always work on a new branch, giving it a descriptive name (e.g., `feature/add-dark-mode`, `bugfix/fix-login-issue`).
-    ```
-    git checkout -b feature-name
-    ```
-
-7.  **Make your changes according to the issue assigned to you.**
-    * Implement your feature or bug fix. Ensure your code follows the project's coding standards and includes necessary tests.
-
-8.  **Commit your changes with a clear and concise message:**
-    * Use a descriptive commit message that explains what changes were made.
-    ```
-    git commit -m 'feat: Add new feature'
-    # Example for a bug fix:
-    # git commit -m 'fix: Resolve login authentication issue'
-    ```
-
-9.  **Push your branch to your forked repository on GitHub (and set upstream):**
-    * This command pushes your local `feature-name` branch to your `origin` remote (your forked repository) and sets it up to track that remote branch. This means that from now on, you can simply use `git push` and `git pull` without specifying the remote and branch name for this particular branch.
-    ```
-    git push -u origin feature-name
-    ```
-    * After this first push, subsequent pushes from this branch can simply be `git push`.
-
-10. **Open a Pull Request (PR) for review:**
-    * Go to your forked repository on GitHub.
-    * You will see a "Compare & pull request" button next to your newly pushed branch. Click it.
-    * Provide a clear title and detailed description of your changes, referencing the issue number it addresses (e.g., "Fixes #123").
-    * Ensure your code adheres to our style guidelines and includes relevant tests.
-   
-
-## 💥 Resolving Merge Conflicts 
-
-Merge conflicts happen when Git can't automatically reconcile changes between two branches. Here's how to resolve them concisely:
-
-1.  **Sync with Latest `main`:**
-    * Ensure your local `main` branch is up-to-date, then merge it into your feature branch.
-    ```bash
-    git checkout main
-    git pull upstream main # Or git pull origin main
-    git checkout feature-name
-    git merge main
-    ```
-    *This step will likely trigger the conflict.*
-
-2.  **Edit Conflicting Files:**
-    * Open files flagged by Git. Manually edit sections marked by `<<<<<<<`, `=======`, and `>>>>>>>` to combine the desired changes.
-    * **Remove all conflict markers** after resolution.
-
-3.  **Stage Changes:**
-    * After resolving each file, stage it:
-    ```
-    git add .
-    ```
-
-4.  **Commit Merge:**
-    * Git will provide a default merge commit message. Review and save it.
-    ```
-    git commit
-    ```
-
-5.  **Push Resolved Branch:**
-    * Push your updated, conflict-free feature branch:
-    ```
-    git push origin feature-name
-    ```
-
-
-
-## 📞 Contact
-
-For any questions, suggestions, or collaborations, feel free to reach out to:
-
--   **Name:** Nikhil Balamurugan
--   **GitHub:** [Nikhil210206](https://github.com/Nikhil210206)
--   **Email:** nikhilbalamurugan@gmail.com
-
-
-## 🙏 Acknowledgments
-
-We extend our sincere gratitude to:
-
--   My incredible team and all dedicated contributors for their hard work and commitment.
--   The open-source community for providing invaluable tools and libraries that made this project possible.
--   The fitness community for their continuous inspiration and feedback.
-
-
-## 📜 License
-
--   This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE) file for more details.
--   This Project is under Open Source Connect India 2025
+</div>

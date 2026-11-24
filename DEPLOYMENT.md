@@ -33,7 +33,7 @@ This project supports automatic deployment when pull requests are merged to the 
 | Variable | Required | Notes |
 | --- | --- | --- |
 | `GEMINI_API_KEY` | Yes | Your Google Gemini API key ([get one](https://aistudio.google.com/app/apikey)). |
-| `SECRET_KEY` | Yes | Long random string for Flask sessions. Generate: `python -c "import secrets; print(secrets.token_hex(32))"`. |
+| `SECRET_KEY` | Yes | Long random string for Flask sessions. **The app will not start on Vercel, Render, Railway or Fly.io without it.** Generate: `python -c "import secrets; print(secrets.token_hex(32))"`. |
 | `DATABASE_URL` | Yes on Vercel | Postgres connection string. Locally defaults to a SQLite file if unset. |
 | `GEMINI_MODEL` | No | Overrides the model (default `gemini-2.5-flash`). Retired models are ignored automatically. |
 | `PYTHONPATH` | No | Set to `.` (already configured in `vercel.json`). |
